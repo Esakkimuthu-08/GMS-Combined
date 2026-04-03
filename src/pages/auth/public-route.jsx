@@ -1,18 +1,15 @@
 import { Navigate } from "react-router-dom";
-import { useAuthStore } from "./store";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const PublicRoute = ({ children }) => {
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-    const role = localStorage.getItem("role");
+  const { isAuthenticated, user } = useAuthStore();
+  const role = user?.Role?.toLowerCase();
 
-    // console.log(isAuthenticated && role);
-    
+  if (isAuthenticated && role) {
+    return <Navigate to={`/${role}/dashboard`} replace />;
+  }
 
-    if (isAuthenticated && role) {
-        return <Navigate to={`/${role}/dashboard`} replace />;
-    }
-
-    return children;
+  return children;
 };
 
 export default PublicRoute;

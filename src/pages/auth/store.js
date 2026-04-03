@@ -1,23 +1,14 @@
-import { create } from "zustand";
+/**
+ * ⚠️ DEPRECATED — This file is no longer used.
+ *
+ * The auth store has been moved to:
+ *   src/stores/useAuthStore.js
+ *
+ * It now uses Zustand's `persist` middleware so auth state
+ * survives page refreshes (no more logout on F5).
+ *
+ * All imports have been updated to the new location.
+ * This file can be safely deleted.
+ */
 
-export const useAuthStore = create((set) => ({
-    token: null,
-    user: null,
-    isAuthenticated: false,
-
-    login: (token, user) =>
-        set({
-            token,
-            user,
-            isAuthenticated: true,
-        }),
-
-    logout: () => {
-        localStorage.removeItem("token");
-        set({
-            token: null,
-            user: null,
-            isAuthenticated: false,
-        });
-    },
-}));
+export { useAuthStore } from "../../stores/useAuthStore";

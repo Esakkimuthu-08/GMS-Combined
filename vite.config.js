@@ -9,4 +9,13 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://localhost:44327',
+        changeOrigin: true,
+        secure: false, // accepts self-signed .NET dev certs
+      },
+    },
+  },
 })

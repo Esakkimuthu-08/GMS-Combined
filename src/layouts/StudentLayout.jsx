@@ -1,15 +1,17 @@
-import { useNavigate, Link } from "react-router-dom";
-import { Home, FilePlus, List, LogOut, Menu } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Home, FilePlus, List, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useAuthStore } from "../stores/useAuthStore";
 
 export function StudentLayout({ children }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { logout } = useAuthStore();
 
   const handleLogout = () => {
-    localStorage.clear(); 
+    logout();
     navigate("/");
-    window.location.reload()
   };
 
   const navItems = [
@@ -18,20 +20,32 @@ export function StudentLayout({ children }) {
     { label: "My Grievances", path: "/student/grievances", icon: List },
   ];
 
+  const isActive = (path) => location.pathname === path;
+
   return (
     <div className="min-h-screen bg-background">
-      <nav className="bg-primary text-primary-foreground shadow-md">
+      <nav className="bg-[#3A5B22] text-white shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-8">
-              <div className="font-bold text-xl">Grievance Portal</div>
+              <div className="font-bold text-lg tracking-tight">
+                🎓 Grievance Portal
+              </div>
 
-              <div className="hidden md:flex gap-6">
+              <div className="hidden md:flex gap-1">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <Link key={item.path} to={item.path} className="flex gap-2">
-                      <Icon size={18} />
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        isActive(item.path)
+                          ? "bg-white/20 text-white"
+                          : "text-white/80 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      <Icon size={16} />
                       {item.label}
                     </Link>
                   );
@@ -39,35 +53,51 @@ export function StudentLayout({ children }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 hover:opacity-90 transition-opacity text-sm"
+                className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-md transition-colors"
               >
-                <LogOut size={18} />
-                <span className="hidden sm:inline">Logout</span>
+                <LogOut size={16} />
+                Logout
               </button>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden"
+                className="md:hidden p-2 rounded-md hover:bg-white/10 transition-colors"
               >
-                <Menu size={24} />
+                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
           </div>
 
           {mobileMenuOpen && (
-            <div className="md:hidden pb-4 space-y-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className="hover:opacity-90 text-sm font-medium"
-                >
-                  {item.label}
-                </Link>
-              ))}
+            <div className="md:hidden pb-4 space-y-1 border-t border-white/10 pt-3">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive(item.path)
+                        ? "bg-white/20 text-white"
+                        : "text-white/80 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    <Icon size={16} />
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-md w-full transition-colors"
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
             </div>
           )}
         </div>

@@ -1,125 +1,155 @@
-import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import img from "../../../assets/welcome.png";
-
+import { authService } from "../../../api/authService";
+import ErrorMessage from "../../../components/common/ErrorMessage";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
 export const StaffsignUp = () => {
-    const [userName, setUserName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    userName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-        const payload = {
-            name: userName,
-            email: email,
-            passwordHash: password
-        };
-        try {
-            await axios.post(
-                "https://localhost:44312/api/Auth/StaffSignUp",
-                payload
-            );
-            alert("Registered successfully");
-        } catch (err) {
-            if (err.response && err.response.status === 400) {
-                alert("User already exists");
-            }
-            else {
-                alert("Something went wrong");
-            }
-        } finally {
-            setUserName("");
-            setEmail("");
-            setPassword("");
-            setConfirmPassword("");
-            navigate("/student/login")
-        }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setIsLoading(true);
+
+    const payload = {
+      name: formData.userName,
+      email: formData.email,
+      passwordHash: formData.password,
     };
 
-    return (
-        <div className="flex w-full h-screen">
-            <div className="flex-1 flex justify-center items-center h-screen">
-                <form
-                    className="flex justify-center items-center w-full"
-                    onSubmit={handleSubmit}
-                >
-                    <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-4">
+    try {
+      await authService.staffSignUp(payload);
+      setSuccess(true);
+      setTimeout(() => navigate("/staff/login"), 2000);
+    } catch (err) {
+      if (err.response?.status === 400) {
+        setError("User already exists with this email.");
+      } else {
+        setError(err.response?.data?.message || "Something went wrong. Try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-                        <h1 className="text-2xl font-medium pb-4 text-center md:text-left">
-                            Get Started Now
-                        </h1>
+  const inputClass =
+    "border text-sm rounded-lg px-3 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[#3A5B22]/40 focus:border-[#3A5B22] transition";
 
-                        <label className="font-medium text-[15px]">Name</label>
-                        <input
-                            className="mb-3 border text-[13px] rounded px-2 py-2 w-full"
-                            type="text"
-                            value={userName}
-                            onChange={(e) => setUserName(e.target.value)}
-                            required
-                        />
+  return (
+    <div className="flex w-full min-h-screen">
+      <div className="flex-1 flex justify-center items-center bg-white px-4">
+        <div className="w-full max-w-md">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">Create Staff Account</h1>
+            <p className="text-gray-500 text-sm">Register to manage and resolve grievances</p>
+          </div>
 
-                        <label className="font-medium text-[15px]">Email</label>
-                        <input
-                            className="mb-3 border text-[13px] rounded px-2 py-2 w-full"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="font-medium text-[15px]">Password</label>
-                                <input
-                                    className="border text-[13px] rounded px-2 py-2 w-full"
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="font-medium text-[15px]">Confirm Password</label>
-                                <input
-                                    className="border text-[13px] rounded px-2 py-2 w-full"
-                                    type="password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
-                                />
-                                <span className="text-red-600 text-[12px]">{error}</span>
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="w-full bg-[#3A5B22] text-white font-bold py-2 rounded-lg"
-                        >
-                            Signup
-                        </button>
-
-                        <Link to={'/staff/login'} className="text-center text-sm mt-3">
-                            Have an account?
-                            <span className="text-blue-600 cursor-pointer ml-1">
-                                Sign in
-                            </span>
-                        </Link>
-                    </div>
-                </form>
+          {success && (
+            <div className="mb-5 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
+              ✓ Registered successfully! Redirecting to login...
             </div>
-            <div className="flex-1 hidden md:block">
-                <img
-                    src={img}
-                    alt="Login"
-                    className="w-full h-screen object-cover"
+          )}
+
+          <ErrorMessage message={error} className="mb-5" />
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+              <input
+                name="userName"
+                type="text"
+                required
+                value={formData.userName}
+                onChange={handleChange}
+                placeholder="Your full name"
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+              <input
+                name="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@institution.edu"
+                className={inputClass}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                <input
+                  name="password"
+                  type="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Create a password"
+                  className={inputClass}
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Repeat password"
+                  className={inputClass}
+                />
+              </div>
             </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2 bg-[#3A5B22] hover:bg-[#2e4a1a] text-white py-2.5 rounded-lg font-semibold transition disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading && <LoadingSpinner size="sm" className="text-white" />}
+              {isLoading ? "Creating account..." : "Sign Up"}
+            </button>
+
+            <p className="text-center text-sm text-gray-500">
+              Already have an account?{" "}
+              <Link to="/staff/login" className="text-[#3A5B22] font-semibold hover:underline">
+                Sign in
+              </Link>
+            </p>
+          </form>
         </div>
-    );
+      </div>
+
+      <div className="flex-1 hidden md:block">
+        <img src={img} alt="Signup" className="w-full h-screen object-cover" />
+      </div>
+    </div>
+  );
 };

@@ -1,90 +1,112 @@
 import { StudentLayout } from "../../layouts/StudentLayout";
 import { FileText, Clock, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { useQuery } from "@tanstack/react-query";
+import { grievanceService } from "../../api/grievanceService";
+import { CardSkeleton } from "../../components/common/SkeletonLoader";
 
 export default function StudentDashboard() {
+  const { user } = useAuthStore();
+  const displayName = user?.Name || user?.name || "Student";
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["student-grievances"],
+    queryFn: () => grievanceService.getStudentGrievances(),
+    select: (res) => res.data,
+    staleTime: 1000 * 60 * 5,
+  });
+
   const stats = [
     {
       label: "Total Grievances",
-      value: "8",
+      value: data?.total ?? 8,
       icon: FileText,
-      bgColor: "bg-blue-100",
-      iconColor: "text-primary",
+      bgColor: "bg-blue-50",
+      iconColor: "text-blue-600",
+      border: "border-blue-100",
     },
     {
       label: "In Progress",
-      value: "3",
+      value: data?.inProgress ?? 3,
       icon: Clock,
-      bgColor: "bg-yellow-100",
+      bgColor: "bg-yellow-50",
       iconColor: "text-yellow-600",
+      border: "border-yellow-100",
     },
     {
       label: "Resolved",
-      value: "5",
+      value: data?.resolved ?? 5,
       icon: CheckCircle,
-      bgColor: "bg-green-100",
+      bgColor: "bg-green-50",
       iconColor: "text-green-600",
+      border: "border-green-100",
     },
   ];
 
   return (
     <StudentLayout>
       <div>
-        <h1 className="text-3xl font-bold mb-8">Welcome, Student</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          Welcome, {displayName} 👋
+        </h1>
+        <p className="text-sm text-gray-500 mb-6">Here's the status of your grievances</p>
 
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.label}
-                className="bg-white rounded-lg shadow-md border p-6"
-              >
-                <div className="flex justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {stat.label}
-                    </p>
-                    <p className="text-3xl font-bold">{stat.value}</p>
+        {/* Stats */}
+        <div className="grid md:grid-cols-3 gap-5 mb-8">
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)
+            : stats.map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div
+                    key={stat.label}
+                    className={`bg-white rounded-xl border ${stat.border} p-6 shadow-sm hover:shadow-md transition-shadow`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
+                          {stat.label}
+                        </p>
+                        <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                      </div>
+                      <div className={`${stat.bgColor} p-3 rounded-lg`}>
+                        <Icon className={stat.iconColor} size={22} />
+                      </div>
+                    </div>
                   </div>
-                  <div className={`${stat.bgColor} p-3 rounded-lg`}>
-                    <Icon className={stat.iconColor} size={24} />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
         </div>
 
-        <div className="bg-white rounded-lg shadow-md border p-8">
-          <h2 className="text-xl font-bold mb-6">Quick Actions</h2>
-
+        {/* Quick Actions */}
+        <div className="bg-white rounded-xl border shadow-sm p-6">
+          <h2 className="text-base font-semibold text-gray-800 mb-5">Quick Actions</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <Link
               to="/student/raise-grievance"
-              className="flex justify-between p-4 border rounded-lg hover:bg-secondary/50 group"
+              className="flex items-center justify-between p-4 border rounded-xl hover:bg-green-50 hover:border-[#3A5B22]/30 group transition-all"
             >
               <div>
-                <p className="font-semibold">Raise New Grievance</p>
-                <p className="text-sm text-muted-foreground">
-                  Submit a new grievance
+                <p className="font-semibold text-gray-800 group-hover:text-[#3A5B22] transition-colors text-sm">
+                  Raise New Grievance
                 </p>
+                <p className="text-xs text-gray-500 mt-0.5">Submit a new complaint or request</p>
               </div>
-              <span className="text-primary group-hover:translate-x-1">→</span>
+              <span className="text-[#3A5B22] text-lg group-hover:translate-x-1 transition-transform">→</span>
             </Link>
 
             <Link
               to="/student/grievances"
-              className="flex justify-between p-4 border rounded-lg hover:bg-secondary/50 group"
+              className="flex items-center justify-between p-4 border rounded-xl hover:bg-green-50 hover:border-[#3A5B22]/30 group transition-all"
             >
               <div>
-                <p className="font-semibold">View My Grievances</p>
-                <p className="text-sm text-muted-foreground">
-                  Check status and details
+                <p className="font-semibold text-gray-800 group-hover:text-[#3A5B22] transition-colors text-sm">
+                  View My Grievances
                 </p>
+                <p className="text-xs text-gray-500 mt-0.5">Check status and details</p>
               </div>
-              <span className="text-primary group-hover:translate-x-1">→</span>
+              <span className="text-[#3A5B22] text-lg group-hover:translate-x-1 transition-transform">→</span>
             </Link>
           </div>
         </div>

@@ -1,17 +1,15 @@
 import { Navigate } from "react-router-dom";
-import { useAuthStore } from "./store";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const RoleRoute = ({ allowedRoles, children }) => {
-    const role = localStorage.getItem("role");
-    // console.log(role);
+  const user = useAuthStore((state) => state.user);
+  const role = user?.Role?.toLowerCase();
 
-    // console.log(allowedRoles.includes(role));
-    
-    if (!allowedRoles.includes(role)) {
-        return <Navigate to="/" replace />;
-    }
+  if (!role || !allowedRoles.includes(role)) {
+    return <Navigate to="/" replace />;
+  }
 
-    return children;
+  return children;
 };
 
 export default RoleRoute;
