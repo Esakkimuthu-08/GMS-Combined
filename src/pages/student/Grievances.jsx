@@ -17,6 +17,7 @@ const MOCK_GRIEVANCES = [
 ];
 
 export default function StudentGrievances() {
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["student-grievances-list"],
     queryFn: () => grievanceService.getStudentGrievances(),
@@ -54,24 +55,24 @@ export default function StudentGrievances() {
                 {isLoading
                   ? Array.from({ length: 5 }).map((_, i) => <TableRowSkeleton key={i} cols={6} />)
                   : grievances.map((g) => (
-                      <tr key={g.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.id}</td>
-                        <td className="px-6 py-4 text-sm text-gray-700">{g.category}</td>
-                        <td className="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">{g.subject}</td>
-                        <td className="px-6 py-4 text-sm text-gray-500">{formatDate(g.date)}</td>
-                        <td className="px-6 py-4">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(g.status)}`}>
-                            {getStatusLabel(g.status)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
-                            <Eye size={14} />
-                            Details
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    <tr key={g.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.id}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{g.category}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">{g.subject}</td>
+                      <td className="px-6 py-4 text-sm text-gray-500">{formatDate(g.date)}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(g.status)}`}>
+                          {getStatusLabel(g.status)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
+                          <Eye size={14} />
+                          Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
 
