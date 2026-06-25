@@ -6,10 +6,16 @@ import { grievanceService } from "../../api/grievanceService";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
-const CATEGORIES = ["Academic", "Attendance", "Facilities", "Staff Conduct", "Hostel", "Other"];
-
+const CATEGORIES = [
+  { label: "Academic", value: 1 },
+  { label: "Attendance", value: 2 },
+  { label: "Facilities", value: 3 },
+  { label: "Staff Conduct", value: 4 },
+  { label: "Hostel", value: 5 },
+  { label: "Other", value: 6 },
+];
 export default function RaiseGrievance() {
-  const [formData, setFormData] = useState({ category: "", subject: "", description: "" });
+  const [formData, setFormData] = useState({ GrievanceCategory: "", subject: "", description: "" });
   const [files, setFiles] = useState([]);
   const [submitted, setSubmitted] = useState(false);
 
@@ -17,17 +23,23 @@ export default function RaiseGrievance() {
     mutationFn: (payload) => grievanceService.raiseGrievance(payload),
     onSuccess: () => {
       setSubmitted(true);
-      setFormData({ category: "", subject: "", description: "" });
+      setFormData({ GrievanceCategory: "", subject: "", description: "" });
       setFiles([]);
       setTimeout(() => setSubmitted(false), 4000);
     },
   });
-
+  console.log(formData);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        name === "GrievanceCategory"
+          ? Number(value)
+          : value,
+    }));
+  };
   const handleFileChange = (e) => {
     if (e.target.files) setFiles(Array.from(e.target.files));
   };
@@ -69,15 +81,15 @@ export default function RaiseGrievance() {
               Grievance Category <span className="text-red-500">*</span>
             </label>
             <select
-              name="category"
-              value={formData.category}
+              name="GrievanceCategory"
+              value={formData.GrievanceCategory}
               onChange={handleInputChange}
               required
               className={inputClass}
             >
               <option value="">Select a category</option>
               {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat.value} value={cat.value}>{cat.label}</option>
               ))}
             </select>
           </div>
