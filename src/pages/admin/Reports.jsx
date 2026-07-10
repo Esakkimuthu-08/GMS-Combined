@@ -62,7 +62,6 @@ export default function AdminReports() {
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Reports & Analytics</h1>
         <p className="text-sm text-gray-500 mb-6">Monthly and category-wise grievance analytics</p>
 
-        {/* Summary */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {summaryStats.map((s) => (
             <div key={s.label} className="bg-white rounded-xl border shadow-sm p-5">
@@ -73,7 +72,6 @@ export default function AdminReports() {
           ))}
         </div>
 
-        {/* Monthly Submitted vs Resolved */}
         <div className="bg-white rounded-xl border shadow-sm p-6 mb-6">
           <h2 className="text-base font-semibold text-gray-800 mb-5">Monthly Submitted vs Resolved</h2>
           <ResponsiveContainer width="100%" height={260}>
@@ -90,7 +88,6 @@ export default function AdminReports() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Resolution Rate Trend */}
           <div className="bg-white rounded-xl border shadow-sm p-6">
             <h2 className="text-base font-semibold text-gray-800 mb-5">Resolution Rate Trend (%)</h2>
             <ResponsiveContainer width="100%" height={220}>
@@ -114,7 +111,6 @@ export default function AdminReports() {
             </ResponsiveContainer>
           </div>
 
-          {/* By Category */}
           <div className="bg-white rounded-xl border shadow-sm p-6">
             <h2 className="text-base font-semibold text-gray-800 mb-5">Grievances by Category</h2>
             <ResponsiveContainer width="100%" height={220}>

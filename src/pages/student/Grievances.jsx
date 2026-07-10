@@ -7,14 +7,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import { getStatusLabel, getStatusBadgeClass } from "../../utils/statusHelpers";
 import { formatDate } from "../../utils/tokenUtils";
 
-const MOCK_GRIEVANCES = [
-  { id: "GRV-001", category: "Academic", subject: "Assignment grading issue", date: "2024-01-15", status: "resolved" },
-  { id: "GRV-002", category: "Facilities", subject: "Library WiFi not working", date: "2024-01-12", status: "in_progress" },
-  { id: "GRV-003", category: "Hostel", subject: "Room maintenance request", date: "2024-01-10", status: "resolved" },
-  { id: "GRV-004", category: "Staff Conduct", subject: "Unfair examination conduct", date: "2024-01-08", status: "in_progress" },
-  { id: "GRV-005", category: "Attendance", subject: "Attendance record correction", date: "2024-01-05", status: "waiting" },
-  { id: "GRV-006", category: "Other", subject: "Canteen food quality", date: "2024-01-03", status: "resolved" },
-];
+
 
 export default function StudentGrievances() {
 
@@ -24,7 +17,12 @@ export default function StudentGrievances() {
     select: (res) => res.data?.grievances ?? res.data,
   });
 
-  const grievances = data ?? MOCK_GRIEVANCES;
+  const grievances = data || [];
+
+  const mapStatus = (status) => {
+    const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
+    return statusMap[status] || "open";
+  };
 
   return (
     <StudentLayout>
@@ -57,12 +55,12 @@ export default function StudentGrievances() {
                   : grievances.map((g) => (
                     <tr key={g.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.id}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{g.category}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{g.grievanceCategory}</td>
                       <td className="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">{g.subject}</td>
-                      <td className="px-6 py-4 text-sm text-gray-500">{formatDate(g.date)}</td>
+                      <td className="px-6 py-4 text-sm text-gray-500">{formatDate(g.createdAt)}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(g.status)}`}>
-                          {getStatusLabel(g.status)}
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(mapStatus(g.status))}`}>
+                          {getStatusLabel(mapStatus(g.status))}
                         </span>
                       </td>
                       <td className="px-6 py-4">

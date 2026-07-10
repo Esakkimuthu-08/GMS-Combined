@@ -46,13 +46,10 @@ export default function StaffAdminLayout({ children }) {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* Sidebar */}
       <aside
-        className={`relative flex flex-col border-r bg-white shadow-sm transition-all duration-300 ease-in-out ${
-          sidebarOpen ? "w-60" : "w-[72px]"
-        }`}
+        className={`relative flex flex-col border-r bg-white shadow-sm transition-all duration-300 ease-in-out ${sidebarOpen ? "w-60" : "w-[72px]"
+          }`}
       >
-        {/* Brand */}
         <div className="flex items-center justify-between px-4 h-16 border-b">
           {sidebarOpen && (
             <span className="font-bold text-[#3A5B22] text-sm tracking-tight truncate">
@@ -68,7 +65,6 @@ export default function StaffAdminLayout({ children }) {
           </button>
         </div>
 
-        {/* Role badge */}
         {sidebarOpen && role && (
           <div className="px-4 pt-4 pb-2">
             <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
@@ -77,18 +73,16 @@ export default function StaffAdminLayout({ children }) {
           </div>
         )}
 
-        {/* Nav items */}
         <nav className="flex-1 px-3 py-3 space-y-1">
           {navItems.map(({ path, label, icon: Icon }) => (
             <Link
               key={path}
               to={path}
               title={!sidebarOpen ? label : undefined}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive(path)
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive(path)
                   ? "bg-[#3A5B22] text-white"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-              }`}
+                }`}
             >
               <Icon size={18} className="shrink-0" />
               {sidebarOpen && <span className="truncate">{label}</span>}
@@ -96,7 +90,6 @@ export default function StaffAdminLayout({ children }) {
           ))}
         </nav>
 
-        {/* Logout */}
         <div className="border-t px-3 py-4">
           <button
             onClick={handleLogout}
@@ -109,9 +102,7 @@ export default function StaffAdminLayout({ children }) {
         </div>
       </aside>
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top header */}
         <header className="h-16 border-b bg-white px-6 flex items-center justify-between shadow-sm">
           <div className="text-sm text-gray-500">
             <span className="font-semibold text-gray-900 capitalize">{role}</span> Panel

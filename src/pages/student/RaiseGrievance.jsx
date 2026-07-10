@@ -75,7 +75,6 @@ export default function RaiseGrievance() {
         )}
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border shadow-sm p-6 space-y-5">
-          {/* Category */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Grievance Category <span className="text-red-500">*</span>
@@ -94,7 +93,6 @@ export default function RaiseGrievance() {
             </select>
           </div>
 
-          {/* Subject */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Subject <span className="text-red-500">*</span>
@@ -110,7 +108,7 @@ export default function RaiseGrievance() {
             />
           </div>
 
-          {/* Description */}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Description <span className="text-red-500">*</span>
@@ -126,7 +124,6 @@ export default function RaiseGrievance() {
             />
           </div>
 
-          {/* File Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Attachments <span className="text-gray-400 font-normal">(Optional)</span>
@@ -166,7 +163,6 @@ export default function RaiseGrievance() {
             )}
           </div>
 
-          {/* Buttons */}
           <div className="flex gap-3 pt-2">
             <button
               type="submit"

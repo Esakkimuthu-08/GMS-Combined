@@ -7,13 +7,7 @@ import { TableRowSkeleton } from "../../components/common/SkeletonLoader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import { getStatusLabel, getStatusBadgeClass } from "../../utils/statusHelpers";
 
-const MOCK_GRIEVANCES = [
-  { id: "GRV-001", studentName: "John Doe", category: "Academic", department: "Engineering", status: "closed" },
-  { id: "GRV-002", studentName: "Jane Smith", category: "Facilities", department: "Science", status: "in_progress" },
-  { id: "GRV-003", studentName: "Mike Johnson", category: "Hostel", department: "Commerce", status: "open" },
-  { id: "GRV-004", studentName: "Sarah Williams", category: "Staff Conduct", department: "Engineering", status: "in_progress" },
-  { id: "GRV-005", studentName: "Tom Brown", category: "Attendance", department: "Arts", status: "closed" },
-];
+
 
 export default function AdminGrievances() {
   const [filters, setFilters] = useState({ search: "", category: "", department: "", status: "" });
@@ -25,7 +19,12 @@ export default function AdminGrievances() {
     staleTime: 1000 * 60 * 2,
   });
 
-  const grievances = data ?? MOCK_GRIEVANCES;
+  const grievances = data || [];
+  console.log(grievances);
+  const mapStatus = (status) => {
+    const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
+    return statusMap[status] || "open";
+  };
 
   const handleFilter = (e) => {
     const { name, value } = e.target;
@@ -47,7 +46,6 @@ export default function AdminGrievances() {
           />
         )}
 
-        {/* Filters */}
         <div className="bg-white rounded-xl border shadow-sm p-5 mb-6">
           <div className="grid md:grid-cols-4 gap-4">
             <div>
@@ -102,7 +100,6 @@ export default function AdminGrievances() {
           </div>
         </div>
 
-        {/* Table */}
         <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -119,28 +116,28 @@ export default function AdminGrievances() {
                 {isLoading
                   ? Array.from({ length: 5 }).map((_, i) => <TableRowSkeleton key={i} cols={6} />)
                   : grievances.map((g) => (
-                      <tr key={g.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.id}</td>
-                        <td className="px-6 py-4 text-sm text-gray-700">{g.studentName}</td>
-                        <td className="px-6 py-4 text-sm text-gray-700">{g.category}</td>
-                        <td className="px-6 py-4 text-sm text-gray-700">{g.department}</td>
-                        <td className="px-6 py-4">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(g.status)}`}>
-                            {getStatusLabel(g.status)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex gap-1">
-                            <button className="px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
-                              View
-                            </button>
-                            <button className="px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
-                              Assign
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    <tr key={g.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.id}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700"> {g.student?.name ?? `Student #${g.studentId}`}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{g.grievanceCategory}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{g.subject}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(mapStatus(g.status))}`}>
+                          {getStatusLabel(mapStatus(g.status))}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-1">
+                          <button className="px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
+                            View
+                          </button>
+                          <button className="px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
+                            Assign
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
 

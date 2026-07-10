@@ -101,36 +101,33 @@ export default function AdminDashboard() {
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Admin Dashboard</h1>
         <p className="text-sm text-gray-500 mb-6">Overview of all grievances across departments</p>
 
-        {/* Stat Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           {isLoading
             ? Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={i} />)
             : stats.map((stat) => {
-                const Icon = stat.icon;
-                return (
-                  <div
-                    key={stat.label}
-                    className={`bg-white rounded-xl border ${stat.border} p-5 shadow-sm hover:shadow-md transition-shadow`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
-                          {stat.label}
-                        </p>
-                        <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                      </div>
-                      <div className={`${stat.bgColor} p-2 rounded-lg`}>
-                        <Icon className={stat.iconColor} size={18} />
-                      </div>
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.label}
+                  className={`bg-white rounded-xl border ${stat.border} p-5 shadow-sm hover:shadow-md transition-shadow`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
+                        {stat.label}
+                      </p>
+                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                    </div>
+                    <div className={`${stat.bgColor} p-2 rounded-lg`}>
+                      <Icon className={stat.iconColor} size={18} />
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
         </div>
 
-        {/* Charts */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {/* Bar Chart */}
           <div className="md:col-span-2 bg-white rounded-xl border shadow-sm p-6">
             <h2 className="text-base font-semibold text-gray-800 mb-5">Monthly Grievance Trend</h2>
             <ResponsiveContainer width="100%" height={240}>
@@ -146,7 +143,6 @@ export default function AdminDashboard() {
             </ResponsiveContainer>
           </div>
 
-          {/* Pie Chart */}
           <div className="bg-white rounded-xl border shadow-sm p-6">
             <h2 className="text-base font-semibold text-gray-800 mb-5">By Category</h2>
             <ResponsiveContainer width="100%" height={240}>
@@ -171,7 +167,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Quick Links */}
         <div className="grid md:grid-cols-4 gap-4">
           {[
             { to: "/admin/grievances", title: "Manage Grievances", desc: "View all grievances" },

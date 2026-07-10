@@ -46,34 +46,32 @@ export default function StaffDashboard() {
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Staff Dashboard</h1>
         <p className="text-sm text-gray-500 mb-6">Manage and respond to your assigned grievances</p>
 
-        {/* Stats */}
         <div className="grid md:grid-cols-3 gap-5 mb-8">
           {isLoading
             ? Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)
             : stats.map((stat) => {
-                const Icon = stat.icon;
-                return (
-                  <div
-                    key={stat.label}
-                    className={`bg-white rounded-xl border ${stat.border} p-6 shadow-sm hover:shadow-md transition-shadow`}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
-                          {stat.label}
-                        </p>
-                        <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                      </div>
-                      <div className={`${stat.bgColor} p-3 rounded-lg`}>
-                        <Icon className={stat.iconColor} size={22} />
-                      </div>
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.label}
+                  className={`bg-white rounded-xl border ${stat.border} p-6 shadow-sm hover:shadow-md transition-shadow`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
+                        {stat.label}
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                    </div>
+                    <div className={`${stat.bgColor} p-3 rounded-lg`}>
+                      <Icon className={stat.iconColor} size={22} />
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
         </div>
 
-        {/* Quick Actions */}
         <div className="bg-white rounded-xl border shadow-sm p-6">
           <h2 className="text-base font-semibold text-gray-800 mb-5">Quick Actions</h2>
           <div className="grid md:grid-cols-2 gap-4">

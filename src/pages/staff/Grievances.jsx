@@ -6,13 +6,7 @@ import { TableRowSkeleton } from "../../components/common/SkeletonLoader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import { getStatusLabel, getStatusBadgeClass, getPriorityBadgeClass } from "../../utils/statusHelpers";
 
-const MOCK_GRIEVANCES = [
-  { id: "GRV-001", studentName: "John Doe", category: "Academic", priority: "High", status: "in_progress" },
-  { id: "GRV-002", studentName: "Jane Smith", category: "Facilities", priority: "Medium", status: "waiting" },
-  { id: "GRV-003", studentName: "Mike Johnson", category: "Hostel", priority: "Low", status: "in_progress" },
-  { id: "GRV-004", studentName: "Sarah Williams", category: "Staff Conduct", priority: "High", status: "new" },
-  { id: "GRV-005", studentName: "Tom Brown", category: "Attendance", priority: "Medium", status: "in_progress" },
-];
+
 
 export default function StaffGrievances() {
   const { data, isLoading, isError, error } = useQuery({
@@ -21,7 +15,12 @@ export default function StaffGrievances() {
     select: (res) => res.data?.grievances ?? res.data,
   });
 
-  const grievances = data ?? MOCK_GRIEVANCES;
+  const grievances = data || [];
+
+  const mapStatus = (status) => {
+    const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
+    return statusMap[status] || "open";
+  };
 
   return (
     <StaffAdminLayout>
@@ -54,16 +53,16 @@ export default function StaffGrievances() {
                   : grievances.map((g) => (
                       <tr key={g.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.id}</td>
-                        <td className="px-6 py-4 text-sm text-gray-700">{g.studentName}</td>
-                        <td className="px-6 py-4 text-sm text-gray-700">{g.category}</td>
+                        <td className="px-6 py-4 text-sm text-gray-700">Student #{g.studentId}</td>
+                        <td className="px-6 py-4 text-sm text-gray-700">{g.grievanceCategory}</td>
                         <td className="px-6 py-4">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getPriorityBadgeClass(g.priority)}`}>
-                            {g.priority}
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getPriorityBadgeClass(g.priority || "Medium")}`}>
+                            {g.priority || "Medium"}
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(g.status)}`}>
-                            {getStatusLabel(g.status)}
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(mapStatus(g.status))}`}>
+                            {getStatusLabel(mapStatus(g.status))}
                           </span>
                         </td>
                         <td className="px-6 py-4">

@@ -13,7 +13,7 @@ export const grievanceService = {
     if (filters.category) params.append("category", filters.category);
     if (filters.department) params.append("department", filters.department);
     if (filters.status) params.append("status", filters.status);
-    return apiClient.get(`/Grievance/all?${params.toString()}`);
+    return apiClient.get(`/Grievance/getAllGrievances?${params.toString()}`);
   },
 
   raiseGrievance: (payload) =>
