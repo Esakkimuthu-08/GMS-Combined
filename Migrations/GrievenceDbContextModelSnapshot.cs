@@ -182,6 +182,8 @@ namespace Grievance_Management_System_Project.Migrations
 
                     b.HasIndex("AssignedToStaffId");
 
+                    b.HasIndex("StudentId");
+
                     b.ToTable("RaiseGrievances");
                 });
 
@@ -237,7 +239,15 @@ namespace Grievance_Management_System_Project.Migrations
                         .WithMany()
                         .HasForeignKey("AssignedToStaffId");
 
+                    b.HasOne("Grievance_Management_System_Project.Model.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AssignedToStaff");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Grievence_Management_System_Project.Model.Staff", b =>

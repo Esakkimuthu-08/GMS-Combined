@@ -1,4 +1,5 @@
 ﻿using Grievance_Management_System_Project.Enum;
+using Grievance_Management_System_Project.Model;
 using Grievence_Management_System_Project.Enum;
 
 namespace Grievence_Management_System_Project.Model
@@ -14,5 +15,6 @@ namespace Grievence_Management_System_Project.Model
         public int? AssignedToStaffId { get; set; }
         public Staff AssignedToStaff { get; set; }
         public int StudentId { get; set; }
+        public Student Student { get; set; }
     }
 }

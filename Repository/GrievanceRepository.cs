@@ -4,6 +4,7 @@ using Grievence_Management_System_Project.Repository.Interfaces;
 using Grievence_Management_System_Project.Request;
 using Grievence_Management_System_Project.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Sockets;
 
 namespace Grievence_Management_System_Project.Repository
 {
@@ -17,7 +18,9 @@ namespace Grievence_Management_System_Project.Repository
 
         public async Task<List<RaiseGrievances>> GetAllGrievances()
         {
-           return await grievenceDbContext.RaiseGrievances.ToListAsync();
+            return await grievenceDbContext.RaiseGrievances
+                .Include(grievance => grievance.Student)
+                .ToListAsync();
         }
 
         public async Task<RaiseGrievances> GetById(int Id)
