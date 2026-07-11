@@ -6,10 +6,14 @@ import { TableRowSkeleton } from "../../components/common/SkeletonLoader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import { getStatusLabel, getStatusBadgeClass } from "../../utils/statusHelpers";
 import { formatDate } from "../../utils/tokenUtils";
+import React, { useState } from "react";
+import { ViewButton } from "@/common/viewButton";
 
 
 
 export default function StudentGrievances() {
+
+  const [selectedGrievance, setSelectedGrievance] = useState(null);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["student-grievances-list"],
@@ -18,6 +22,8 @@ export default function StudentGrievances() {
   });
 
   const grievances = data || [];
+
+
 
   const mapStatus = (status) => {
     const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
@@ -64,7 +70,7 @@ export default function StudentGrievances() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
+                        <button onClick={() => setSelectedGrievance(g)} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
                           <Eye size={14} />
                           Details
                         </button>
@@ -73,6 +79,12 @@ export default function StudentGrievances() {
                   ))}
               </tbody>
             </table>
+
+            {selectedGrievance && (
+              <ViewButton
+                grievance={selectedGrievance}
+                cancel={setSelectedGrievance} />
+            )}
 
             {!isLoading && grievances.length === 0 && (
               <div className="text-center py-16 text-gray-400">

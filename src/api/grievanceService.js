@@ -2,7 +2,7 @@ import apiClient from "./api";
 
 export const grievanceService = {
   getStudentGrievances: () =>
-    apiClient.get("/Grievance/student"),
+    apiClient.get("/Grievance/getAllGrievances"),
 
   getStaffGrievances: () =>
     apiClient.get("/Grievance/staff"),

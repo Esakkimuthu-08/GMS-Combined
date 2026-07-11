@@ -6,10 +6,12 @@ import { grievanceService } from "../../api/grievanceService";
 import { TableRowSkeleton } from "../../components/common/SkeletonLoader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import { getStatusLabel, getStatusBadgeClass } from "../../utils/statusHelpers";
+import { ViewButton } from "@/common/viewButton";
 
 
 
 export default function AdminGrievances() {
+  const [selectedGrievance, setSelectedGrievance] = useState(null);
   const [filters, setFilters] = useState({ search: "", category: "", department: "", status: "" });
 
   const { data, isLoading, isError, error } = useQuery({
@@ -20,7 +22,7 @@ export default function AdminGrievances() {
   });
 
   const grievances = data || [];
-  console.log(grievances);
+
   const mapStatus = (status) => {
     const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
     return statusMap[status] || "open";
@@ -128,7 +130,7 @@ export default function AdminGrievances() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex gap-1">
-                          <button className="px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
+                          <button onClick={() => setSelectedGrievance(g)} className="px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
                             View
                           </button>
                           <button className="px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
@@ -140,6 +142,14 @@ export default function AdminGrievances() {
                   ))}
               </tbody>
             </table>
+
+            {selectedGrievance && (
+              <ViewButton
+                grievance={selectedGrievance}
+                cancel={setSelectedGrievance}
+                showStudentDetails={true}
+              />
+            )}
 
             {!isLoading && grievances.length === 0 && (
               <div className="text-center py-16 text-gray-400">
