@@ -30,7 +30,6 @@ namespace Grievance_Management_System_Project.Controllers
             await authService.StudentSignUp(studentSignUpRequest);
             return Ok(new { message = ErrorConstant.Created });
         }
-        [Authorize(Roles ="Student")]
         [HttpGet("getAllStudentSignUp")]
         public async Task<IActionResult> GetAllStudentSignUp()
         {

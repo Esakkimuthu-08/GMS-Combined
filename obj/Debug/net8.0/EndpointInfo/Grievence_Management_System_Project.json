@@ -270,6 +270,30 @@
         }
       }
     },
+    "/api/Grievance/assigned": {
+      "get": {
+        "tags": [
+          "Grievance"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Grievance/getStudentGrievances": {
+      "get": {
+        "tags": [
+          "Grievance"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Staff/createStaff": {
       "post": {
         "tags": [

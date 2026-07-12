@@ -111,8 +111,28 @@
   },
   {
     "ContainingType": "Grievence_Management_System_Project.Controllers.GrievanceController",
+    "Method": "GetAssignedGrievances",
+    "RelativePath": "api/Grievance/assigned",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Grievence_Management_System_Project.Controllers.GrievanceController",
     "Method": "GetAllGrievances",
     "RelativePath": "api/Grievance/getAllGrievances",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Grievence_Management_System_Project.Controllers.GrievanceController",
+    "Method": "GetStudentGrievances",
+    "RelativePath": "api/Grievance/getStudentGrievances",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

@@ -30,6 +30,7 @@ namespace Grievence_Management_System_Project.Service
 
             };
             await grievanceRepository.AddGrievance(raiseGrievances);
+
         }
 
         public async Task<List<RaiseGrievances>> GetAllGrievances()
@@ -46,6 +47,20 @@ namespace Grievence_Management_System_Project.Service
 
             await grievanceRepository.UpdateStatus(grievance);
 
+        }
+
+        public async Task<List<RaiseGrievances>> GetAssignedGrievances(string email)
+        {
+            Staff staff = await staffRepository.GetByEmail(email);
+
+            return await grievanceRepository.GetAssignedGrievances(staff.Id);
+        }
+
+        public async Task<List<RaiseGrievances>> GetStudentGrievances(string email)
+        {
+            Student student = await studentRepository.GetByEmail(email);
+
+            return await grievanceRepository.GetStudentGrievances(student.Id);
         }
     }
 }

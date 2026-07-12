@@ -1,5 +1,6 @@
 ﻿using Grievance_Management_System_Project.AppDbContext;
 using Grievance_Management_System_Project.Enum;
+using Grievance_Management_System_Project.Model;
 using Grievance_Management_System_Project.Repository.Interfaces;
 using Grievance_Management_System_Project.Service;
 using Grievence_Management_System_Project.Model;
@@ -25,6 +26,10 @@ namespace Grievance_Management_System_Project.Repository
         {
             return await grievenceDbContext.Staffs.FirstOrDefaultAsync(Incharge => Incharge.InchargeOf == category);
 
+        }
+        public async Task<Staff> GetByEmail(string email)
+        {
+            return await grievenceDbContext.Staffs.FirstOrDefaultAsync(StaffEmail => StaffEmail.Email == email);
         }
     }
 }

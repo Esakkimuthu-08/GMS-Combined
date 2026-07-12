@@ -178,6 +178,9 @@ namespace Grievance_Management_System_Project.Migrations
                     b.Property<string>("Subject")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TicketId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AssignedToStaffId");

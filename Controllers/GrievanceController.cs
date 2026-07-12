@@ -28,11 +28,26 @@ namespace Grievence_Management_System_Project.Controllers
 
         [HttpPut("updateStatus")]
 
-        public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusDto updateStatusDto) 
+        public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusDto updateStatusDto)
         {
             await grievanceService.UpdateStatus(updateStatusDto);
             return Ok(ErrorConstant.Created);
         }
 
+        [HttpGet("assigned")]
+        public async Task<IActionResult> GetAssignedGrievances()
+        {
+            var email = User.FindFirst("Email")?.Value;
+
+            return Ok(await grievanceService.GetAssignedGrievances(email));
+        }
+
+        [HttpGet("getStudentGrievances")]
+        public async Task<IActionResult> GetStudentGrievances()
+        {
+            var email = User.FindFirst("Email")?.Value;
+
+            return Ok(await grievanceService.GetStudentGrievances(email));
+        }
     }
 }

@@ -12,8 +12,11 @@ namespace Grievence_Management_System_Project.Repository
     {
         public async Task AddGrievance(RaiseGrievances raiseGrievances)
         {
-          await grievenceDbContext.RaiseGrievances.AddAsync(raiseGrievances);
-          await  grievenceDbContext.SaveChangesAsync();
+            await grievenceDbContext.RaiseGrievances.AddAsync(raiseGrievances);
+            await grievenceDbContext.SaveChangesAsync();
+
+            raiseGrievances.TicketId = $"GMS-{raiseGrievances.Id:D5}";
+            await grievenceDbContext.SaveChangesAsync();
         }
 
         public async Task<List<RaiseGrievances>> GetAllGrievances()
@@ -25,13 +28,28 @@ namespace Grievence_Management_System_Project.Repository
 
         public async Task<RaiseGrievances> GetById(int Id)
         {
-           return await grievenceDbContext.RaiseGrievances.FirstOrDefaultAsync(ticket => ticket.Id == Id);
+            return await grievenceDbContext.RaiseGrievances.FirstOrDefaultAsync(ticket => ticket.Id == Id);
         }
 
         public async Task UpdateStatus(RaiseGrievances grievance)
         {
             grievenceDbContext.RaiseGrievances.Update(grievance);
             await grievenceDbContext.SaveChangesAsync();
+
+        }
+        public async Task<List<RaiseGrievances>> GetAssignedGrievances(int staffId)
+        {
+            return await grievenceDbContext.RaiseGrievances
+                .Include(g => g.Student)
+                .Where(g => g.AssignedToStaffId == staffId)
+                .ToListAsync();
+        }
+
+        public async Task<List<RaiseGrievances>> GetStudentGrievances(int studentId)
+        {
+            return await grievenceDbContext.RaiseGrievances.Include(g => g.Student)
+                .Where(g => g.StudentId == studentId)
+                .ToListAsync();
         }
     }
 }

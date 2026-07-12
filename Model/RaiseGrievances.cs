@@ -7,6 +7,7 @@ namespace Grievence_Management_System_Project.Model
     public class RaiseGrievances
     {
         public int Id { get; set; }
+        public string TicketId { get; set; }
         public GrievanceCategory GrievanceCategory { get; set; }
         public string Subject { get; set; }
         public string Description { get; set; }

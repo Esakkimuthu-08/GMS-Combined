@@ -8,5 +8,6 @@ namespace Grievance_Management_System_Project.Repository.Interfaces
         Task CreateStaff(Staff staff);
         Task<List<Staff>> GetAllStaffs();
         Task<Staff> GetByCategory(GrievanceCategory category);
+        Task<Staff> GetByEmail(string email);
     }
 }

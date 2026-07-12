@@ -9,7 +9,11 @@ namespace Grievence_Management_System_Project.Repository.Interfaces
 
         Task<RaiseGrievances> GetById(int Id);
 
-        Task UpdateStatus(RaiseGrievances grivance);
-        
+        Task UpdateStatus(RaiseGrievances grievance);
+        Task<List<RaiseGrievances>> GetAssignedGrievances(int staffId);
+        Task<List<RaiseGrievances>> GetStudentGrievances(int studentId);
+
+
+
     }
 }
