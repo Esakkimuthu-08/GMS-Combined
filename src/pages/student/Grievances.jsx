@@ -60,7 +60,7 @@ export default function StudentGrievances() {
                   ? Array.from({ length: 5 }).map((_, i) => <TableRowSkeleton key={i} cols={6} />)
                   : grievances.map((g) => (
                     <tr key={g.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.id}</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.ticketId}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{g.grievanceCategory}</td>
                       <td className="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">{g.subject}</td>
                       <td className="px-6 py-4 text-sm text-gray-500">{formatDate(g.createdAt)}</td>

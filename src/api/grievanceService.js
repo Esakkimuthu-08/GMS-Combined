@@ -2,10 +2,10 @@ import apiClient from "./api";
 
 export const grievanceService = {
   getStudentGrievances: () =>
-    apiClient.get("/Grievance/getAllGrievances"),
+    apiClient.get("/Grievance/getStudentGrievances"),
 
   getStaffGrievances: () =>
-    apiClient.get("/Grievance/staff"),
+    apiClient.get("/Grievance/assigned"),
 
   getAllGrievances: (filters = {}) => {
     const params = new URLSearchParams();

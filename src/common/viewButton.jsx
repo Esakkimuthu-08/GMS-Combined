@@ -1,4 +1,5 @@
 import React from "react";
+import { MdCancelPresentation } from "react-icons/md";
 
 export const ViewButton = ({ grievance, cancel, showStudentDetails = false }) => {
     return (
@@ -12,7 +13,7 @@ export const ViewButton = ({ grievance, cancel, showStudentDetails = false }) =>
                         onClick={() => cancel(false)}
                         className="rounded px-3 py-1 hover:bg-gray-100"
                     >
-                        ✕
+                        <MdCancelPresentation className=" bg-none" size={30} />
                     </button>
                 </div>
 
@@ -21,7 +22,7 @@ export const ViewButton = ({ grievance, cancel, showStudentDetails = false }) =>
                     <div className="flex">
                         <div className="w-1/2 font-semibold">Ticket ID</div>
                         <div className="w-4 text-center">:</div>
-                        <div className="flex-1">{grievance.id}</div>
+                        <div className="flex-1">{grievance.ticketId}</div>
                     </div>
 
                     <div className="flex">
