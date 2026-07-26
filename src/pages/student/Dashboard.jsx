@@ -1,26 +1,31 @@
 import { StudentLayout } from "../../layouts/StudentLayout";
 import { FileText, Clock, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useAuthStore } from "../../stores/useAuthStore";
 import { useQuery } from "@tanstack/react-query";
 import { grievanceService } from "../../api/grievanceService";
 import { CardSkeleton } from "../../components/common/SkeletonLoader";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function StudentDashboard() {
-  const { user } = useAuthStore();
-  const displayName = user?.Name || user?.name || "Student";
+
+  const role = useAuthStore((state) => state.role);
 
   const { data, isLoading } = useQuery({
     queryKey: ["student-grievances"],
     queryFn: () => grievanceService.getStudentGrievances(),
     select: (res) => res.data,
+    enabled: role?.role == "student",
     staleTime: 1000 * 60 * 5,
-  });
+  })
+
+
+  const displayName = data?.[0]?.student?.name ?? "Student";
+
 
   const stats = [
     {
       label: "Total Grievances",
-      value: data?.total ?? 8,
+      value: data?.length ?? 0,
       icon: FileText,
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600",

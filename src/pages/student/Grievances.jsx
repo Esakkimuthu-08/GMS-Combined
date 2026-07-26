@@ -20,7 +20,7 @@ export default function StudentGrievances() {
     queryFn: () => grievanceService.getStudentGrievances(),
     select: (res) => res.data?.grievances ?? res.data,
   });
-
+  console.log(data)
   const grievances = data || [];
 
 

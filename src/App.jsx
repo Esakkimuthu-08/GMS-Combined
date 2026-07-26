@@ -16,6 +16,7 @@ import { StaffsignUp } from "./pages/auth/register/staff-signup";
 import StudentDashboard from "./pages/student/Dashboard";
 import StudentGrievances from "./pages/student/Grievances";
 import RaiseGrievance from "./pages/student/RaiseGrievance";
+import StudentDiscussion from "./pages/student/Discussion";
 
 // Staff
 import StaffDashboard from "./pages/staff/Dashboard";
@@ -108,6 +109,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/student/discussion"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["student"]}>
+                <StudentDiscussion />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+
 
         {/* Staff */}
         <Route

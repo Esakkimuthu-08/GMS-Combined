@@ -4,12 +4,15 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { grievanceService } from "../../api/grievanceService";
 import { CardSkeleton } from "../../components/common/SkeletonLoader";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function StaffDashboard() {
+  const role = useAuthStore(state => state.role)
   const { data, isLoading } = useQuery({
     queryKey: ["staff-grievances"],
     queryFn: () => grievanceService.getStaffGrievances(),
     select: (res) => res.data,
+    enabled: role?.role == "staff",
     staleTime: 1000 * 60 * 5,
   });
 

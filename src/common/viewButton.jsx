@@ -11,7 +11,7 @@ export const ViewButton = ({ grievance, cancel, showStudentDetails = false }) =>
 
                     <button
                         onClick={() => cancel(false)}
-                        className="rounded px-3 py-1 hover:bg-gray-100"
+                        className="rounded px-3 py-1 hover:bg-gray-100 hover:text-black"
                     >
                         <MdCancelPresentation className=" bg-none" size={30} />
                     </button>
@@ -59,7 +59,7 @@ export const ViewButton = ({ grievance, cancel, showStudentDetails = false }) =>
                         <div className="w-1/2 font-semibold">Assigned Staff</div>
                         <div className="w-4 text-center">:</div>
                         <div className="flex-1">
-                            {grievance.assignedToStaffId ?? "Not Assigned"}
+                            {grievance.assignedToStaff.name ?? "Not Assigned"}
                         </div>
                     </div>
 

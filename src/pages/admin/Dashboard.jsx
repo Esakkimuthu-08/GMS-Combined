@@ -49,6 +49,7 @@ export default function AdminDashboard() {
     queryKey: ["admin-grievances"],
     queryFn: () => grievanceService.getAllGrievances(),
     select: (res) => res.data,
+    enabled: role == "admin",
     staleTime: 1000 * 60 * 5,
   });
 

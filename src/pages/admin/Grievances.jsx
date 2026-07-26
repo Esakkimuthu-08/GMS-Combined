@@ -1,5 +1,5 @@
 import StaffAdminLayout from "../../layouts/StaffAdminLayout";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { grievanceService } from "../../api/grievanceService";
@@ -22,6 +22,7 @@ export default function AdminGrievances() {
   });
 
   const grievances = data || [];
+
 
   const mapStatus = (status) => {
     const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
@@ -119,7 +120,7 @@ export default function AdminGrievances() {
                   ? Array.from({ length: 5 }).map((_, i) => <TableRowSkeleton key={i} cols={6} />)
                   : grievances.map((g) => (
                     <tr key={g.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.id}</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.ticketId}</td>
                       <td className="px-6 py-4 text-sm text-gray-700"> {g.student?.name ?? `Student #${g.studentId}`}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{g.grievanceCategory}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{g.subject}</td>

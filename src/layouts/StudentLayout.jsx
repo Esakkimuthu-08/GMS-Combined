@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Home, FilePlus, List, LogOut, Menu, X } from "lucide-react";
+import { Home, FilePlus, List, LogOut, Menu, X, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
 
@@ -18,6 +18,8 @@ export function StudentLayout({ children }) {
     { label: "Dashboard", path: "/student/dashboard", icon: Home },
     { label: "Raise Grievance", path: "/student/raise-grievance", icon: FilePlus },
     { label: "My Grievances", path: "/student/grievances", icon: List },
+    { label: "Discussion", path: "/student/discussion", icon: MessageSquare },
+
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -39,11 +41,10 @@ export function StudentLayout({ children }) {
                     <Link
                       key={item.path}
                       to={item.path}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        isActive(item.path)
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive(item.path)
                           ? "bg-white/20 text-white"
                           : "text-white/80 hover:bg-white/10 hover:text-white"
-                      }`}
+                        }`}
                     >
                       <Icon size={16} />
                       {item.label}
@@ -80,11 +81,10 @@ export function StudentLayout({ children }) {
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActive(item.path)
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive(item.path)
                         ? "bg-white/20 text-white"
                         : "text-white/80 hover:bg-white/10 hover:text-white"
-                    }`}
+                      }`}
                   >
                     <Icon size={16} />
                     {item.label}
