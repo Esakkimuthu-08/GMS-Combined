@@ -1,13 +1,13 @@
 import { StudentLayout } from "../../layouts/StudentLayout";
 import { Eye } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { grievanceService } from "../../api/grievanceService";
-import { TableRowSkeleton } from "../../components/common/SkeletonLoader";
+
+import { DiscussionSkeleton } from "../../components/common/SkeletonLoader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import { getStatusLabel, getStatusBadgeClass } from "../../utils/statusHelpers";
 import { formatDate } from "../../utils/tokenUtils";
 import React, { useState } from "react";
 import { ViewButton } from "@/common/viewButton";
+import { Hook } from "@/api/hook";
 
 
 
@@ -15,15 +15,9 @@ export default function StudentGrievances() {
 
   const [selectedGrievance, setSelectedGrievance] = useState(null);
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["student-grievances-list"],
-    queryFn: () => grievanceService.getStudentGrievances(),
-    select: (res) => res.data?.grievances ?? res.data,
-  });
-  console.log(data)
+  const { data, isLoading, isError, error } = Hook.StudentGrievances();
+
   const grievances = data || [];
-
-
 
   const mapStatus = (status) => {
     const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
@@ -32,7 +26,7 @@ export default function StudentGrievances() {
 
   return (
     <StudentLayout>
-      <div>
+      <div className="flex-1 overflow-y-auto">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">My Grievances</h1>
         <p className="text-sm text-gray-500 mb-6">Track the status of all your submitted grievances</p>
 
@@ -57,7 +51,7 @@ export default function StudentGrievances() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {isLoading
-                  ? Array.from({ length: 5 }).map((_, i) => <TableRowSkeleton key={i} cols={6} />)
+                  ? Array.from({ length: 8 }).map((_, i) => <DiscussionSkeleton key={i} cols={6} />)
                   : grievances.map((g) => (
                     <tr key={g.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm font-semibold text-[#3A5B22]">{g.ticketId}</td>

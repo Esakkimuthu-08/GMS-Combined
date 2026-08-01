@@ -28,7 +28,7 @@ export default function RaiseGrievance() {
       setTimeout(() => setSubmitted(false), 4000);
     },
   });
-  console.log(formData);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 

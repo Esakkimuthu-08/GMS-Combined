@@ -46,7 +46,6 @@ export const Login = () => {
 
   return (
     <div className="flex w-full min-h-screen">
-      {/* Form Side */}
       <div className="flex-1 flex justify-center items-center bg-white px-4">
         <div className="w-full max-w-md">
           <div className="mb-8">
@@ -104,7 +103,6 @@ export const Login = () => {
         </div>
       </div>
 
-      {/* Image Side */}
       <div className="flex-1 hidden md:block">
         <img src={img} alt="Login" className="w-full h-screen object-cover" />
       </div>

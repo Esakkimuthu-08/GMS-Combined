@@ -23,3 +23,24 @@ export function CardSkeleton() {
     </div>
   );
 }
+
+export function DiscussionSkeleton() {
+  return (
+    <div className="flex items-center justify-between p-4 border-b animate-pulse">
+      {/* Left Side */}
+      <div className="flex items-center gap-4">
+        {/* ID / Avatar */}
+        <div className="w-12 h-12 rounded-full bg-gray-200" />
+
+        {/* Name & Subject */}
+        <div>
+          <div className="h-4 w-32 bg-gray-200 rounded mb-2" />
+          <div className="h-3 w-56 bg-gray-200 rounded" />
+        </div>
+      </div>
+
+      {/* Right Side (Time/Status) */}
+      <div className="h-3 w-16 bg-gray-200 rounded" />
+    </div>
+  );
+}
