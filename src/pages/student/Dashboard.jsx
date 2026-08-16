@@ -22,6 +22,7 @@ export default function StudentDashboard() {
   const displayName = data?.[0]?.student?.name ?? "Student";
 
 
+
   const stats = [
     {
       label: "Total Grievances",
