@@ -8,7 +8,7 @@ using System.Net.Sockets;
 
 namespace Grievence_Management_System_Project.Repository
 {
-    public class GrievanceRepository(GrievenceDbContext grievenceDbContext) : IGrievanceRepository
+    public class GrievanceRepository(GrievanceDbContext grievenceDbContext) : IGrievanceRepository
     {
         public async Task AddGrievance(RaiseGrievances raiseGrievances)
         {
@@ -23,6 +23,7 @@ namespace Grievence_Management_System_Project.Repository
         {
             return await grievenceDbContext.RaiseGrievances
                 .Include(grievance => grievance.Student)
+                .Include(g => g.AssignedToStaff)
                 .ToListAsync();
         }
 
@@ -41,13 +42,16 @@ namespace Grievence_Management_System_Project.Repository
         {
             return await grievenceDbContext.RaiseGrievances
                 .Include(g => g.Student)
+                .Include(g => g.AssignedToStaff)
                 .Where(g => g.AssignedToStaffId == staffId)
                 .ToListAsync();
         }
 
         public async Task<List<RaiseGrievances>> GetStudentGrievances(int studentId)
         {
-            return await grievenceDbContext.RaiseGrievances.Include(g => g.Student)
+            return await grievenceDbContext.RaiseGrievances.
+                Include(g => g.Student)
+                .Include(g => g.AssignedToStaff)
                 .Where(g => g.StudentId == studentId)
                 .ToListAsync();
         }

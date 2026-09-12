@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Grievence_Management_System_Project.Repository
 {
-    public class ApprovalRepository(GrievenceDbContext grievenceDbContext) : IApprovalRepository
+    public class ApprovalRepository(GrievanceDbContext grievenceDbContext) : IApprovalRepository
     {
         public async Task<StaffSignUp> GetStaffRequestId(int id)
         {

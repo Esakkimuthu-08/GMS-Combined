@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Grievance_Management_System_Project.Repository
 {
-    public class StaffRepository(GrievenceDbContext grievenceDbContext) : IStaffRepository
+    public class StaffRepository(GrievanceDbContext grievenceDbContext) : IStaffRepository
     {
         public async Task CreateStaff(Staff staff)
         {

@@ -1,6 +1,7 @@
-﻿
+
 using Grievance_Management_System.Auth;
 using Grievance_Management_System_Project.Enum;
+using Grievance_Management_System_Project.Exceptions;
 using Grievance_Management_System_Project.Model;
 using Grievance_Management_System_Project.Repository.Interfaces;
 using Grievence_Management_System_Project.Model;
@@ -15,7 +16,8 @@ namespace Grievence_Management_System_Project.Service
         public async Task AddGrievance(GrievanceRequest grievanceRequest, string email)
         {
             Staff incharge = await staffRepository.GetByCategory(grievanceRequest.GrievanceCategory);
-            Student student = await studentRepository.GetByEmail(email);
+            Student student = await studentRepository.GetByEmail(email)
+                ?? throw new NotFoundException();
 
 
             RaiseGrievances raiseGrievances = new RaiseGrievances()
@@ -53,12 +55,15 @@ namespace Grievence_Management_System_Project.Service
         {
             Staff staff = await staffRepository.GetByEmail(email);
 
+
             return await grievanceRepository.GetAssignedGrievances(staff.Id);
         }
 
         public async Task<List<RaiseGrievances>> GetStudentGrievances(string email)
         {
-            Student student = await studentRepository.GetByEmail(email);
+        
+            Student student = await studentRepository.GetByEmail(email)
+                ?? throw new NotFoundException();
 
             return await grievanceRepository.GetStudentGrievances(student.Id);
         }

@@ -15,6 +15,7 @@ namespace Grievence_Management_System_Project.Controllers
         public async Task<IActionResult> AddGrievance([FromBody] GrievanceRequest grievanceRequest)
         {
             var email = User.FindFirst("Email")?.Value;
+            Console.WriteLine(email);
 
             await grievanceService.AddGrievance(grievanceRequest, email);
             return Ok(ErrorConstant.Created);

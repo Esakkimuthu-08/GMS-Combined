@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Grievance_Management_System_Project.Migrations
 {
-    [DbContext(typeof(GrievenceDbContext))]
+    [DbContext(typeof(GrievanceDbContext))]
     [Migration("20260303163322_InitialCreate")]
     partial class InitialCreate
     {

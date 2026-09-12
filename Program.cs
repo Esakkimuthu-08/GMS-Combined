@@ -55,7 +55,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddDbContext<GrievenceDbContext>(options =>
+builder.Services.AddDbContext<GrievanceDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));

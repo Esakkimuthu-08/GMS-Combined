@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Grievance_Management_System_Project.Migrations
 {
-    [DbContext(typeof(GrievenceDbContext))]
+    [DbContext(typeof(GrievanceDbContext))]
     [Migration("20260712085930_TicketIdAdded")]
     partial class TicketIdAdded
     {

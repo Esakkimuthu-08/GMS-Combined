@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Grievance_Management_System_Project.Migrations
 {
-    [DbContext(typeof(GrievenceDbContext))]
+    [DbContext(typeof(GrievanceDbContext))]
     partial class GrievenceDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -149,6 +149,33 @@ namespace Grievance_Management_System_Project.Migrations
                     b.ToTable("Students");
                 });
 
+            modelBuilder.Entity("Grievence_Management_System_Project.Model.GrievanceMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GrievanceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GrievanceId");
+
+                    b.ToTable("GrievanceMessages");
+                });
+
             modelBuilder.Entity("Grievence_Management_System_Project.Model.RaiseGrievances", b =>
                 {
                     b.Property<int>("Id")
@@ -234,6 +261,17 @@ namespace Grievance_Management_System_Project.Migrations
                         .IsRequired();
 
                     b.Navigation("Staff");
+                });
+
+            modelBuilder.Entity("Grievence_Management_System_Project.Model.GrievanceMessage", b =>
+                {
+                    b.HasOne("Grievence_Management_System_Project.Model.RaiseGrievances", "Grievance")
+                        .WithMany()
+                        .HasForeignKey("GrievanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Grievance");
                 });
 
             modelBuilder.Entity("Grievence_Management_System_Project.Model.RaiseGrievances", b =>

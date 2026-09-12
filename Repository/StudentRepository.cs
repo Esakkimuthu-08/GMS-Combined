@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Grievance_Management_System_Project.Repository
 {
-    public class StudentRepository(GrievenceDbContext grievenceDbContext) : IStudentRepository
+    public class StudentRepository(GrievanceDbContext grievenceDbContext) : IStudentRepository
     {
         public async Task<List<Student>> GetAllStudents()
         {

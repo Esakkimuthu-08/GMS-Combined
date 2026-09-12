@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Grievance_Management_System_Project.Repository
 {
-    public class AuthRepository(GrievenceDbContext grievenceDbContext) : IAuthRepository
+    public class AuthRepository(GrievanceDbContext grievenceDbContext) : IAuthRepository
     {
         public async Task StaffSignUp(StaffSignUp staffSignUp)
         {
