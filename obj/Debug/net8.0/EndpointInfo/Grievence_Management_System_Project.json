@@ -196,6 +196,37 @@
         }
       }
     },
+    "/api/Discussion/grievanceDiscussion": {
+      "post": {
+        "tags": [
+          "Discussion"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrievanceMessageDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrievanceMessageDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrievanceMessageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Grievance/raiseGrievance": {
       "post": {
         "tags": [
@@ -412,6 +443,29 @@
         ],
         "type": "integer",
         "format": "int32"
+      },
+      "GrievanceMessageDto": {
+        "required": [
+          "grievanceId",
+          "message",
+          "sender"
+        ],
+        "type": "object",
+        "properties": {
+          "grievanceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sender": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "GrievanceRequest": {
         "required": [

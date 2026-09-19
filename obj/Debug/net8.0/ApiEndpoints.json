@@ -110,6 +110,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
+    "Method": "AddMessage",
+    "RelativePath": "api/Discussion/grievanceDiscussion",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "grievanceMessageDto",
+        "Type": "Grievence_Management_System_Project.Request.GrievanceMessageDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Grievence_Management_System_Project.Controllers.GrievanceController",
     "Method": "GetAssignedGrievances",
     "RelativePath": "api/Grievance/assigned",

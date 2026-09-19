@@ -8,12 +8,13 @@ using Grievence_Management_System_Project.Model;
 using Grievence_Management_System_Project.Repository.Interfaces;
 using Grievence_Management_System_Project.Request;
 using Grievence_Management_System_Project.Service.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Grievence_Management_System_Project.Service
 {
     public class GrievanceService(IGrievanceRepository grievanceRepository, IStaffRepository staffRepository, IStudentRepository studentRepository) : IGrievanceService
     {
-        public async Task AddGrievance(GrievanceRequest grievanceRequest, string email)
+        public async Task AddGrievance([FromBody]GrievanceRequest grievanceRequest, string email)
         {
             Staff incharge = await staffRepository.GetByCategory(grievanceRequest.GrievanceCategory);
             Student student = await studentRepository.GetByEmail(email)

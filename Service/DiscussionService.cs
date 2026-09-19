@@ -1,9 +1,35 @@
-﻿using Grievence_Management_System_Project.Repository.Interfaces;
+﻿using Grievance_Management_System.Auth;
+using Grievance_Management_System.Constants;
+using Grievance_Management_System_Project.Exceptions;
+using Grievance_Management_System_Project.Model;
+using Grievance_Management_System_Project.Repository.Interfaces;
+using Grievence_Management_System_Project.Model;
+using Grievence_Management_System_Project.Repository;
+using Grievence_Management_System_Project.Repository.Interfaces;
+using Grievence_Management_System_Project.Request;
 using Grievence_Management_System_Project.Service.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Grievence_Management_System_Project.Service
 {
-    public class DiscussionService(IDiscussionRepository discussionRepository) : IDiscussionService
+    public class DiscussionService(IDiscussionRepository discussionRepository, IGrievanceRepository grievanceRepository, IStudentRepository studentRepository) : IDiscussionService
     {
+        public async Task AddMessage(GrievanceMessageDto grievanceMessageDto, string email)
+        {
+            RaiseGrievances grievanceId = await grievanceRepository.GetById(grievanceMessageDto.GrievanceId)
+                     ?? throw new NotFoundException();
+
+            Student student = await studentRepository.GetByEmail(email)
+                    ?? throw new NotFoundException();
+
+            GrievanceMessage grievanceMessage = new()
+            {
+                GrievanceId = grievanceId.Id,
+                Sender = student.Email,
+                Message = grievanceMessageDto.Message,
+                CreatedAt = DateTime.UtcNow,
+            };
+            await discussionRepository.AddMessage(grievanceMessage);
+        }
     }
 }
