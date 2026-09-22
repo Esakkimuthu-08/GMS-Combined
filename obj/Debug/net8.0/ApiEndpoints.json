@@ -111,6 +111,16 @@
   },
   {
     "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
+    "Method": "GetMessages",
+    "RelativePath": "api/Discussion/getMessages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
     "Method": "AddMessage",
     "RelativePath": "api/Discussion/grievanceDiscussion",
     "HttpMethod": "POST",

@@ -1,9 +1,12 @@
 ﻿using Grievence_Management_System_Project.Model;
+using Grievence_Management_System_Project.Response;
 
 namespace Grievence_Management_System_Project.Repository.Interfaces
 {
     public interface IDiscussionRepository
     {
         Task AddMessage(GrievanceMessage grievanceMessage);
+        Task<List<GrievanceMessageResponseDto>> GetMessagesByGrievanceIds(List<int> grievanceIds);
+
     }
 }

@@ -227,6 +227,18 @@
         }
       }
     },
+    "/api/Discussion/getMessages": {
+      "get": {
+        "tags": [
+          "Discussion"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Grievance/raiseGrievance": {
       "post": {
         "tags": [

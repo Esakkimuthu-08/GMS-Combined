@@ -7,12 +7,13 @@ using Grievence_Management_System_Project.Model;
 using Grievence_Management_System_Project.Repository;
 using Grievence_Management_System_Project.Repository.Interfaces;
 using Grievence_Management_System_Project.Request;
+using Grievence_Management_System_Project.Response;
 using Grievence_Management_System_Project.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Grievence_Management_System_Project.Service
 {
-    public class DiscussionService(IDiscussionRepository discussionRepository, IGrievanceRepository grievanceRepository, IStudentRepository studentRepository) : IDiscussionService
+    public class DiscussionService(IDiscussionRepository discussionRepository, IGrievanceRepository grievanceRepository, IStudentRepository studentRepository, IStaffRepository staffRepository) : IDiscussionService
     {
         public async Task AddMessage(GrievanceMessageDto grievanceMessageDto, string email)
         {
@@ -30,6 +31,17 @@ namespace Grievence_Management_System_Project.Service
                 CreatedAt = DateTime.UtcNow,
             };
             await discussionRepository.AddMessage(grievanceMessage);
+        }
+
+        public async Task<List<GrievanceMessageResponseDto>> GetMessage(string email)
+        {
+            Staff staff = await staffRepository.GetByEmail(email)
+                 ?? throw new NotFoundException();
+
+            List<RaiseGrievances> grievance = await grievanceRepository.GetAssignedGrievances(staff.Id);
+
+            var grievanceIds = grievance.Select(g => g.Id).ToList();
+            return await discussionRepository.GetMessagesByGrievanceIds(grievanceIds);
         }
     }
 }
