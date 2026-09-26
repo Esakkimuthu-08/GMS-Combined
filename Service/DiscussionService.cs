@@ -23,10 +23,24 @@ namespace Grievence_Management_System_Project.Service
             Student student = await studentRepository.GetByEmail(email)
                     ?? throw new NotFoundException();
 
+            string sender;
+
+            if (student != null)
+            {
+                sender = student.Email;
+            }
+            else
+            {
+                Staff staff = await staffRepository.GetByEmail(email)
+                     ?? throw new NotFoundException();
+
+                sender = staff.Email;
+            }
+
             GrievanceMessage grievanceMessage = new()
             {
                 GrievanceId = grievanceId.Id,
-                Sender = student.Email,
+                Sender = sender,
                 Message = grievanceMessageDto.Message,
                 CreatedAt = DateTime.UtcNow,
             };
