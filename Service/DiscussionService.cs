@@ -3,6 +3,7 @@ using Grievance_Management_System.Constants;
 using Grievance_Management_System_Project.Exceptions;
 using Grievance_Management_System_Project.Model;
 using Grievance_Management_System_Project.Repository.Interfaces;
+using Grievence_Management_System_Project.Exceptions;
 using Grievence_Management_System_Project.Model;
 using Grievence_Management_System_Project.Repository;
 using Grievence_Management_System_Project.Repository.Interfaces;
@@ -20,8 +21,7 @@ namespace Grievence_Management_System_Project.Service
             RaiseGrievances grievanceId = await grievanceRepository.GetById(grievanceMessageDto.GrievanceId)
                      ?? throw new NotFoundException();
 
-            Student student = await studentRepository.GetByEmail(email)
-                    ?? throw new NotFoundException();
+            Student student = await studentRepository.GetByEmail(email);
 
             string sender;
 
@@ -34,7 +34,16 @@ namespace Grievence_Management_System_Project.Service
                 Staff staff = await staffRepository.GetByEmail(email)
                      ?? throw new NotFoundException();
 
-                sender = staff.Email;
+                if (staff.Id == grievanceId.AssignedToStaffId)
+                {
+                    sender = staff.Email;
+                }
+                else
+                {
+                    throw new ForbiddenException();
+                }
+
+
             }
 
             GrievanceMessage grievanceMessage = new()

@@ -44,7 +44,7 @@ namespace Grievence_Management_System_Project.Service
         public async Task UpdateStatus(UpdateStatusDto updateStatusDto)
         {
             RaiseGrievances grievance = await grievanceRepository
-        .GetById(updateStatusDto.GrievanceId) ?? throw new Exception("Grievance not found");
+        .GetById(updateStatusDto.GrievanceId) ?? throw new NotFoundException();
 
             grievance.Status = updateStatusDto.GrievanceStatus;
 

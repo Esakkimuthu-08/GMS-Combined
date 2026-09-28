@@ -13,6 +13,8 @@
         public const string AccountExist = "Account already exists. Please login.";
         public const string AccountPending = "Signup request already pending approval";
         public const string Unauthorized = "Invalid credentials";
+        public const string FORBIDDEN_MESSAGE = "You do not have permission to access this resource.";
+
 
 
     }
