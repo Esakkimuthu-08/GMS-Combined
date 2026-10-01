@@ -27,22 +27,20 @@ namespace Grievence_Management_System_Project.Service
 
             if (student != null)
             {
+                if (grievanceId.StudentId != student.Id
+                    || grievanceId.Status == Enum.GrievanceStatus.Resolved
+                ) throw new ForbiddenException();
+
                 sender = student.Email;
             }
             else
             {
                 Staff staff = await staffRepository.GetByEmail(email)
-                     ?? throw new NotFoundException();
+                    ?? throw new NotFoundException();
 
-                if (staff.Id == grievanceId.AssignedToStaffId)
-                {
-                    sender = staff.Email;
-                }
-                else
-                {
-                    throw new ForbiddenException();
-                }
+                if (staff.Id != grievanceId.AssignedToStaffId) throw new ForbiddenException();
 
+                sender = staff.Email;
 
             }
 
