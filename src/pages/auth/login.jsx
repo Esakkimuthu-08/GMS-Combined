@@ -49,7 +49,7 @@ export const Login = () => {
       <div className="flex-1 flex justify-center items-center bg-white px-4">
         <div className="w-full max-w-md">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">Welcome back</h1>
+            <p className="text-3xl font-bold text-gray-900 mb-1">Welcome back</p>
             <p className="text-gray-500 text-sm">Sign in to your account to continue</p>
           </div>
 

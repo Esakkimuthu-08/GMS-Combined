@@ -1,17 +1,20 @@
 import StaffAdminLayout from "../../layouts/StaffAdminLayout";
-import { Eye, MessageSquare } from "lucide-react";
+import { Eye, MessageSquare, X, ArrowLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { grievanceService } from "../../api/grievanceService";
 import { TableRowSkeleton } from "../../components/common/SkeletonLoader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import { getStatusLabel, getStatusBadgeClass, getPriorityBadgeClass } from "../../utils/statusHelpers";
 import { ViewButton } from "@/common/viewButton";
+import Discussion from "@/components/Discussion";
 import React, { useState } from "react";
 
 
 
 export default function StaffGrievances() {
   const [selectedGrievance, setSelectedGrievance] = useState(null);
+  const [replyGrievance, setReplyGrievance] = useState(null);
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["staff-grievances-list"],
     queryFn: () => grievanceService.getStaffGrievances(),
@@ -19,7 +22,6 @@ export default function StaffGrievances() {
   });
 
   const grievances = data || [];
-
 
   const mapStatus = (status) => {
     const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
@@ -71,10 +73,16 @@ export default function StaffGrievances() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex gap-1">
-                          <button onClick={() => { setSelectedGrievance(g) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
+                          <button
+                            onClick={() => setSelectedGrievance(g)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors"
+                          >
                             <Eye size={14} /> View
                           </button>
-                          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors">
+                          <button
+                            onClick={() => setReplyGrievance(g)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors"
+                          >
                             <MessageSquare size={14} /> Reply
                           </button>
                         </div>
@@ -84,6 +92,7 @@ export default function StaffGrievances() {
               </tbody>
             </table>
 
+            {/* View details modal (existing behaviour — untouched) */}
             {selectedGrievance && (
               <ViewButton
                 grievance={selectedGrievance}
@@ -91,6 +100,7 @@ export default function StaffGrievances() {
                 showStudentDetails={true}
               />
             )}
+
             {!isLoading && grievances.length === 0 && (
               <div className="text-center py-16 text-gray-400">
                 <p className="text-lg font-semibold mb-1">No grievances assigned</p>
@@ -100,6 +110,37 @@ export default function StaffGrievances() {
           </div>
         </div>
       </div>
+
+      {replyGrievance && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-2xl h-[80vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+
+            <div className="flex items-center justify-between bg-[#3A5B22] text-white px-5 py-4 shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <MessageSquare size={18} className="shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-bold truncate">
+                    {replyGrievance.ticketId}
+                    <span className="ml-2 text-xs font-normal opacity-80">
+                      {replyGrievance.grievanceCategory}
+                    </span>
+                  </p>
+                  <p className="text-xs opacity-75 truncate">{replyGrievance.subject}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setReplyGrievance(null)}
+                className="p-1.5 rounded-lg hover:bg-white/20 transition-colors shrink-0 ml-4"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <Discussion grievanceId={replyGrievance.id} />
+          </div>
+        </div>
+      )}
     </StaffAdminLayout>
   );
 }

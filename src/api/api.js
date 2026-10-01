@@ -25,10 +25,15 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      localStorage.removeItem("gms-auth-store");
-      window.location.href = "/";
+
+      const requestUrl = error.config?.url || "";
+      const isLoginRequest = requestUrl.includes("/Approval/login");
+      if (!isLoginRequest) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("gms-auth-store");
+        window.location.href = "/";
+      }
     }
     return Promise.reject(error);
   }
