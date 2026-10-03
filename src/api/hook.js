@@ -24,7 +24,18 @@ export const Hook = {
                 throw err;
             }
         },
-        select: (res) => res.data?.messages ?? res.data ?? [],
+        // Always re-fetch when a different grievance is selected.
+        staleTime: 0,
+        // Client-side guard: keep only messages that belong to this grievance.
+        // Protects against a backend that returns all messages regardless of the
+        // grievanceId query param.
+        select: (res) => {
+            const all = res.data?.messages ?? res.data ?? [];
+            if (!Array.isArray(all)) return [];
+            return all.filter(
+                (m) => String(m.grievanceId ?? m.GrievanceId) === String(grievanceId)
+            );
+        },
         enabled: Boolean(grievanceId),
     }),
 
