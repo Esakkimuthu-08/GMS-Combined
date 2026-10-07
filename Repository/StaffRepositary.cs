@@ -13,8 +13,8 @@ namespace Grievance_Management_System_Project.Repository
     {
         public async Task CreateStaff(Staff staff)
         {
-             await grievenceDbContext.Staffs.AddAsync(staff);
-             await grievenceDbContext.SaveChangesAsync();
+            await grievenceDbContext.Staffs.AddAsync(staff);
+            await grievenceDbContext.SaveChangesAsync();
         }
 
         public async Task<List<Staff>> GetAllStaffs()
@@ -30,6 +30,11 @@ namespace Grievance_Management_System_Project.Repository
         public async Task<Staff> GetByEmail(string email)
         {
             return await grievenceDbContext.Staffs.FirstOrDefaultAsync(StaffEmail => StaffEmail.Email == email);
+        }
+
+        public async Task<Staff> GetById(int? id)
+        {
+            return await grievenceDbContext.Staffs.FirstOrDefaultAsync(StaffId => StaffId.Id == id);
         }
     }
 }

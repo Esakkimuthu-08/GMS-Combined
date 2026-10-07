@@ -8,9 +8,6 @@ namespace Grievence_Management_System_Project.Request
         public int GrievanceId { get; set; }
         [Required]
 
-        public string Sender { get; set; }
-        [Required]
-
         public string Message { get; set; }
     }
 }

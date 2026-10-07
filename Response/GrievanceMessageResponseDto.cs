@@ -7,7 +7,8 @@
         public int GrievanceId { get; set; }
         public string Sender { get; set; }
         public string Message { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public bool IsRead { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
     }
 
 }

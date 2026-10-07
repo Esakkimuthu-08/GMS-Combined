@@ -24,6 +24,7 @@ namespace Grievence_Management_System_Project.Service
             Student student = await studentRepository.GetByEmail(email);
 
             string sender;
+            string recipientEmail;
 
             if (student != null)
             {
@@ -32,6 +33,10 @@ namespace Grievence_Management_System_Project.Service
                 ) throw new ForbiddenException();
 
                 sender = student.Email;
+
+                Staff staffEmail = await staffRepository.GetById(grievanceId.AssignedToStaffId)
+                    ?? throw new NotFoundException(); 
+                recipientEmail = staffEmail.Email;
             }
             else
             {
@@ -41,6 +46,10 @@ namespace Grievence_Management_System_Project.Service
                 if (staff.Id != grievanceId.AssignedToStaffId) throw new ForbiddenException();
 
                 sender = staff.Email;
+                Student grievanceStudent =  await studentRepository.GetById(grievanceId.StudentId)
+                    ?? throw new NotFoundException();
+
+                recipientEmail = grievanceStudent.Email;
 
             }
 
@@ -49,20 +58,89 @@ namespace Grievence_Management_System_Project.Service
                 GrievanceId = grievanceId.Id,
                 Sender = sender,
                 Message = grievanceMessageDto.Message,
+                IsRead = false,
                 CreatedAt = DateTime.UtcNow,
             };
             await discussionRepository.AddMessage(grievanceMessage);
+
+            Notification notification = new()
+            {
+                RecipientEmail = recipientEmail,
+                GrievanceId = grievanceId.Id,
+                Message = "New Message received",
+                CreatedAt = DateTime.UtcNow
+            };
+            await discussionRepository.AddNotification(notification);
         }
 
-        public async Task<List<GrievanceMessageResponseDto>> GetMessage(string email)
+        public async Task<List<Notification>> GetAllNotification()
         {
-            Staff staff = await staffRepository.GetByEmail(email)
-                 ?? throw new NotFoundException();
-
-            List<RaiseGrievances> grievance = await grievanceRepository.GetAssignedGrievances(staff.Id);
-
-            var grievanceIds = grievance.Select(g => g.Id).ToList();
-            return await discussionRepository.GetMessagesByGrievanceIds(grievanceIds);
+           return await discussionRepository.GetAllNotification();
         }
+
+        public async Task<List<GrievanceMessageResponseDto>> GetMessage(string email, int grievanceid)
+        {
+            Student student = await studentRepository.GetByEmail(email);
+
+            if (student != null)
+            {
+                List<RaiseGrievances> grievances =
+                    await grievanceRepository.GetStudentGrievances(student.Id);
+
+                var grievanceIds = grievances
+                    .Where(grievances => grievances.Id == grievanceid)
+                    .Select(g => g.Id)
+                    .ToList();
+
+                return await discussionRepository
+                    .GetMessagesByGrievanceIds(grievanceIds);
+            }
+            else
+            {
+                Staff staff = await staffRepository.GetByEmail(email)
+                    ?? throw new NotFoundException();
+
+                List<RaiseGrievances> grievances =
+                    await grievanceRepository.GetAssignedGrievances(staff.Id);
+
+                var grievanceIds = grievances
+                    .Where(grievances => grievances.Id == grievanceid)
+                    .Select(g => g.Id)
+                    .ToList();
+
+                return await discussionRepository
+                    .GetMessagesByGrievanceIds(grievanceIds);
+            }
+        }
+
+        public async Task<List<Notification>> GetNotificationsByEmail(string email)
+        {
+            return await discussionRepository.GetNotificationsByEmail(email);
+        }
+
+        public async Task MarkMessagesAsRead(int grievanceId, string email)
+        {
+            RaiseGrievances grievance = await grievanceRepository.GetById(grievanceId)
+                ?? throw new NotFoundException();
+
+            Student student = await studentRepository.GetByEmail(email);
+
+            if (student != null)
+            {
+                if (grievance.StudentId != student.Id)
+                    throw new ForbiddenException();
+            }
+            else
+            {
+                Staff staff = await staffRepository.GetByEmail(email)
+                    ?? throw new NotFoundException();
+
+                if (grievance.AssignedToStaffId != staff.Id)
+                    throw new ForbiddenException();
+            }
+
+            await discussionRepository.MarkMessagesAsRead(grievanceId, email);
+        }
+
     }
 }

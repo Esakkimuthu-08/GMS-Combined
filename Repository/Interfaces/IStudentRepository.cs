@@ -6,5 +6,6 @@ namespace Grievance_Management_System_Project.Repository.Interfaces
     {
         Task<List<Student>> GetAllStudents();
         Task<Student> GetByEmail(string email);
+        Task<Student> GetById(int id);
     }
 }

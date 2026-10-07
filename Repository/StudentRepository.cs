@@ -16,5 +16,10 @@ namespace Grievance_Management_System_Project.Repository
         {
             return await grievenceDbContext.Students.FirstOrDefaultAsync(StudentEmail => StudentEmail.Email == email);
         }
+
+        public async Task<Student> GetById(int id)
+        {
+           return await grievenceDbContext.Students.FirstOrDefaultAsync(studentId => studentId.Id == id);
+        }
     }
 }

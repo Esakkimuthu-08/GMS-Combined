@@ -232,6 +232,63 @@
         "tags": [
           "Discussion"
         ],
+        "parameters": [
+          {
+            "name": "grievanceid",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Discussion/markAsRead/{grievanceId}": {
+      "put": {
+        "tags": [
+          "Discussion"
+        ],
+        "parameters": [
+          {
+            "name": "grievanceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Discussion/GetAllNotification": {
+      "get": {
+        "tags": [
+          "Discussion"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Discussion/GetNotificationByEmail": {
+      "get": {
+        "tags": [
+          "Discussion"
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -459,18 +516,13 @@
       "GrievanceMessageDto": {
         "required": [
           "grievanceId",
-          "message",
-          "sender"
+          "message"
         ],
         "type": "object",
         "properties": {
           "grievanceId": {
             "type": "integer",
             "format": "int32"
-          },
-          "sender": {
-            "minLength": 1,
-            "type": "string"
           },
           "message": {
             "minLength": 1,

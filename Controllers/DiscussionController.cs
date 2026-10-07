@@ -19,11 +19,41 @@ namespace Grievence_Management_System_Project.Controllers
             return Ok(ErrorConstant.Created);
         }
         [HttpGet("getMessages")]
-        public async Task<IActionResult> GetMessages()
+        public async Task<IActionResult> GetMessages([FromQuery] int grievanceid)
         {
             var email = User.FindFirst("Email")?.Value;
 
-            return Ok(await discussionService.GetMessage(email));
+            return Ok(await discussionService.GetMessage(email, grievanceid));
+        }
+        [HttpPut("markAsRead/{grievanceId}")]
+        public async Task<IActionResult> MarkAsRead(int grievanceId)
+        {
+            string email = User.FindFirst("Email")?.Value
+                ?? throw new UnauthorizedAccessException();
+
+            await discussionService.MarkMessagesAsRead(grievanceId, email);
+
+            return Ok(new
+            {
+                message = "Messages marked as read"
+            });
+        }
+
+        [HttpGet("GetAllNotification")]
+
+        public async Task<IActionResult> GetAllNotification()
+        {
+            var notification = await discussionService.GetAllNotification();
+            return Ok(notification);
+        }
+
+        [HttpGet("GetNotificationByEmail")]
+
+        public async Task<IActionResult> GetNotificationsByEmail()
+        {
+            var email = User.FindFirst("Email")?.Value;
+            return Ok(await discussionService.GetNotificationsByEmail(email));
+
         }
     }
 

@@ -111,8 +111,34 @@
   },
   {
     "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
+    "Method": "GetAllNotification",
+    "RelativePath": "api/Discussion/GetAllNotification",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
     "Method": "GetMessages",
     "RelativePath": "api/Discussion/getMessages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "grievanceid",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
+    "Method": "GetNotificationsByEmail",
+    "RelativePath": "api/Discussion/GetNotificationByEmail",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -130,6 +156,22 @@
       {
         "Name": "grievanceMessageDto",
         "Type": "Grievence_Management_System_Project.Request.GrievanceMessageDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
+    "Method": "MarkAsRead",
+    "RelativePath": "api/Discussion/markAsRead/{grievanceId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "grievanceId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

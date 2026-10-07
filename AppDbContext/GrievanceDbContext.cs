@@ -16,5 +16,6 @@ namespace Grievance_Management_System_Project.AppDbContext
         public DbSet<StudentSignUp> StudentSignUp { get; set; }
         public DbSet<RaiseGrievances> RaiseGrievances { get; set; }
         public DbSet<GrievanceMessage> GrievanceMessages { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
     }
 }
