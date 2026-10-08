@@ -164,13 +164,29 @@
   {
     "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
     "Method": "MarkAsRead",
-    "RelativePath": "api/Discussion/markAsRead/{grievanceId}",
+    "RelativePath": "api/Discussion/messages/markAsRead/{grievanceId}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "grievanceId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
+    "Method": "MarkAsReadForNotification",
+    "RelativePath": "api/Discussion/notification/markAsRead/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       }

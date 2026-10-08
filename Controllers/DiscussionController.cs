@@ -18,6 +18,7 @@ namespace Grievence_Management_System_Project.Controllers
             await discussionService.AddMessage(grievanceMessageDto, email);
             return Ok(ErrorConstant.Created);
         }
+
         [HttpGet("getMessages")]
         public async Task<IActionResult> GetMessages([FromQuery] int grievanceid)
         {
@@ -25,7 +26,8 @@ namespace Grievence_Management_System_Project.Controllers
 
             return Ok(await discussionService.GetMessage(email, grievanceid));
         }
-        [HttpPut("markAsRead/{grievanceId}")]
+
+        [HttpPut("messages/markAsRead/{grievanceId}")]
         public async Task<IActionResult> MarkAsRead(int grievanceId)
         {
             string email = User.FindFirst("Email")?.Value
@@ -53,6 +55,18 @@ namespace Grievence_Management_System_Project.Controllers
         {
             var email = User.FindFirst("Email")?.Value;
             return Ok(await discussionService.GetNotificationsByEmail(email));
+
+        }
+
+        [HttpPut("notification/markAsRead/{id}")]
+
+        public async Task<IActionResult> MarkAsReadForNotification([FromRoute] int id)
+        {
+            string email = User.FindFirst("Email")?.Value;
+
+            await discussionService.MarkAsReadForNotification(email, id);
+
+            return NoContent();
 
         }
     }

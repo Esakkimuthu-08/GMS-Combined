@@ -1,4 +1,5 @@
 ﻿using Grievance_Management_System_Project.AppDbContext;
+using Grievance_Management_System_Project.Exceptions;
 using Grievence_Management_System_Project.Model;
 using Grievence_Management_System_Project.Repository.Interfaces;
 using Grievence_Management_System_Project.Response;
@@ -26,11 +27,10 @@ namespace Grievence_Management_System_Project.Repository
             return await grievanceDbContext.Notifications.ToListAsync();
         }
 
-        public async Task<List<GrievanceMessageResponseDto>> GetMessagesByGrievanceIds(List<int> grievanceIds)
+        public async Task<List<GrievanceMessageResponseDto>> GetMessagesByGrievanceIds( int grievanceIds)
         {
             return await grievanceDbContext.GrievanceMessages.
-                  Where(messages => grievanceIds.
-                  Contains(messages.GrievanceId))
+                  Where(messages => messages.GrievanceId == grievanceIds)
                   .Select(message => new GrievanceMessageResponseDto
                   {
                       Id = message.Id,
@@ -46,6 +46,15 @@ namespace Grievence_Management_System_Project.Repository
         public async Task<List<Notification>> GetNotificationsByEmail(string email)
         {
             return await grievanceDbContext.Notifications.Where(Email => Email.RecipientEmail == email).ToListAsync();
+        }
+
+        public async Task MarkAsReadForNotification(string email, int id)
+        {
+            Notification notification = await grievanceDbContext.Notifications.FirstOrDefaultAsync(n =>
+            n.Id == id &&
+            n.RecipientEmail == email) ?? throw new NotFoundException();
+
+            notification.IsRead = true;
         }
 
         public async Task MarkMessagesAsRead(int grievanceId, string email)

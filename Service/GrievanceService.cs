@@ -5,6 +5,7 @@ using Grievance_Management_System_Project.Exceptions;
 using Grievance_Management_System_Project.Model;
 using Grievance_Management_System_Project.Repository.Interfaces;
 using Grievence_Management_System_Project.Model;
+using Grievence_Management_System_Project.Repository;
 using Grievence_Management_System_Project.Repository.Interfaces;
 using Grievence_Management_System_Project.Request;
 using Grievence_Management_System_Project.Service.Interfaces;
@@ -12,9 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Grievence_Management_System_Project.Service
 {
-    public class GrievanceService(IGrievanceRepository grievanceRepository, IStaffRepository staffRepository, IStudentRepository studentRepository) : IGrievanceService
+    public class GrievanceService(IGrievanceRepository grievanceRepository, IStaffRepository staffRepository, IStudentRepository studentRepository,IDiscussionRepository discussionRepository) : IGrievanceService
     {
-        public async Task AddGrievance([FromBody]GrievanceRequest grievanceRequest, string email)
+        public async Task AddGrievance(GrievanceRequest grievanceRequest, string email)
         {
             Staff incharge = await staffRepository.GetByCategory(grievanceRequest.GrievanceCategory);
             Student student = await studentRepository.GetByEmail(email)
@@ -33,6 +34,15 @@ namespace Grievence_Management_System_Project.Service
 
             };
             await grievanceRepository.AddGrievance(raiseGrievances);
+
+            Notification notification = new()
+            {
+                RecipientEmail = incharge.Email,
+                GrievanceId = raiseGrievances.Id,
+                Message = "Grievance Successfully Raised and Assigned",
+                CreatedAt = DateTime.UtcNow
+            };
+            await discussionRepository.AddNotification(notification);
 
         }
 

@@ -249,7 +249,7 @@
         }
       }
     },
-    "/api/Discussion/markAsRead/{grievanceId}": {
+    "/api/Discussion/messages/markAsRead/{grievanceId}": {
       "put": {
         "tags": [
           "Discussion"
@@ -288,6 +288,29 @@
       "get": {
         "tags": [
           "Discussion"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Discussion/notification/markAsRead/{id}": {
+      "put": {
+        "tags": [
+          "Discussion"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
         ],
         "responses": {
           "200": {
