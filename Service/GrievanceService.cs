@@ -4,6 +4,8 @@ using Grievance_Management_System_Project.Enum;
 using Grievance_Management_System_Project.Exceptions;
 using Grievance_Management_System_Project.Model;
 using Grievance_Management_System_Project.Repository.Interfaces;
+using Grievence_Management_System_Project.Enum;
+using Grievence_Management_System_Project.Exceptions;
 using Grievence_Management_System_Project.Model;
 using Grievence_Management_System_Project.Repository;
 using Grievence_Management_System_Project.Repository.Interfaces;
@@ -51,12 +53,24 @@ namespace Grievence_Management_System_Project.Service
             return await grievanceRepository.GetAllGrievances();
         }
 
-        public async Task UpdateStatus(UpdateStatusDto updateStatusDto)
+        public async Task UpdateStatus(UpdateStatusDto dto, string email)
         {
-            RaiseGrievances grievance = await grievanceRepository
-        .GetById(updateStatusDto.GrievanceId) ?? throw new NotFoundException();
+            RaiseGrievances grievance =
+        await grievanceRepository.GetById(dto.GrievanceId)
+        ?? throw new NotFoundException();
 
-            grievance.Status = updateStatusDto.GrievanceStatus;
+            Staff staff = await staffRepository.GetByEmail(email)
+                ?? throw new NotFoundException();
+
+            if (grievance.AssignedToStaffId != staff.Id)
+                throw new ForbiddenException();
+
+            if (!System.Enum.IsDefined(dto.GrievanceStatus))
+            {
+                throw new ArgumentException("Invalid grievance status");
+            }
+
+            grievance.Status = dto.GrievanceStatus;
 
             await grievanceRepository.UpdateStatus(grievance);
 

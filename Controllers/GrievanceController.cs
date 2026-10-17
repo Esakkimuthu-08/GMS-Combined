@@ -31,7 +31,9 @@ namespace Grievence_Management_System_Project.Controllers
 
         public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusDto updateStatusDto)
         {
-            await grievanceService.UpdateStatus(updateStatusDto);
+            var email = User.FindFirst("Email")?.Value;
+
+            await grievanceService.UpdateStatus(updateStatusDto, email);
             return Ok(ErrorConstant.Created);
         }
 

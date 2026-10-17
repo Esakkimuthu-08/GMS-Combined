@@ -27,7 +27,7 @@ namespace Grievence_Management_System_Project.Repository
             return await grievanceDbContext.Notifications.ToListAsync();
         }
 
-        public async Task<List<GrievanceMessageResponseDto>> GetMessagesByGrievanceIds( int grievanceIds)
+        public async Task<List<GrievanceMessageResponseDto>> GetMessagesByGrievanceIds(int grievanceIds)
         {
             return await grievanceDbContext.GrievanceMessages.
                   Where(messages => messages.GrievanceId == grievanceIds)
@@ -48,13 +48,31 @@ namespace Grievence_Management_System_Project.Repository
             return await grievanceDbContext.Notifications.Where(Email => Email.RecipientEmail == email).ToListAsync();
         }
 
+        public async Task<List<UnreadMessageResponseDto>> GetUnreadMessages(string email)
+        {
+            return await grievanceDbContext.GrievanceMessages
+                 .Where(grievance => !grievance.IsRead && grievance.Sender != email
+                 && (grievance.Grievance.AssignedToStaff.Email == email || grievance.Grievance.Student.Email == email))
+                 .GroupBy(grievance => grievance.GrievanceId)
+                 .Select(g => new UnreadMessageResponseDto
+                 {
+                     GrievanceId = g.Key,
+                     UnreadCount = g.Count()
+                 })
+         .ToListAsync();
+        }
+
         public async Task MarkAsReadForNotification(string email, int id)
         {
-            Notification notification = await grievanceDbContext.Notifications.FirstOrDefaultAsync(n =>
-            n.Id == id &&
-            n.RecipientEmail == email) ?? throw new NotFoundException();
+            Notification notification = await grievanceDbContext.Notifications
+                .FirstOrDefaultAsync(n =>
+                    n.Id == id &&
+                    n.RecipientEmail == email)
+                ?? throw new NotFoundException();
 
             notification.IsRead = true;
+
+            await grievanceDbContext.SaveChangesAsync();
         }
 
         public async Task MarkMessagesAsRead(int grievanceId, string email)
@@ -64,7 +82,7 @@ namespace Grievence_Management_System_Project.Repository
                     message.GrievanceId == grievanceId &&
                     message.Sender != email &&
                     !message.IsRead)
-                .ToListAsync();
+                .ToListAsync(); 
 
             foreach (var message in messages)
             {

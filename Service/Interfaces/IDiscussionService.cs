@@ -13,6 +13,7 @@ namespace Grievence_Management_System_Project.Service.Interfaces
         Task<List<Notification>> GetAllNotification();
         Task<List<Notification>> GetNotificationsByEmail(string email);
 
-        Task MarkAsReadForNotification(string email,int id);
+        Task MarkAsReadForNotification(string email, int id);
+        Task<List<UnreadMessageResponseDto>> GetUnreadMessages(string email);
     }
 }

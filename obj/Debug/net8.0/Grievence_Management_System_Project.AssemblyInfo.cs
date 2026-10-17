@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Grievence_Management_System_Project")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b705c286b09d3ea67365d229b94e143e1694315c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6e2fd6188e049fdd4254c1f3ab3554b46c511a11")]
 [assembly: System.Reflection.AssemblyProductAttribute("Grievence_Management_System_Project")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Grievence_Management_System_Project")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

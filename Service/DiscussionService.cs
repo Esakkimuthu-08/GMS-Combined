@@ -108,6 +108,11 @@ namespace Grievence_Management_System_Project.Service
             return await discussionRepository.GetNotificationsByEmail(email);
         }
 
+        public async Task<List<UnreadMessageResponseDto>> GetUnreadMessages(string email)
+        {
+            return await discussionRepository.GetUnreadMessages(email);
+        }
+
         public async Task MarkAsReadForNotification(string email, int id)
         {
             await discussionRepository.MarkAsReadForNotification(email, id);

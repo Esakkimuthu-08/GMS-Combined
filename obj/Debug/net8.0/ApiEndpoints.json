@@ -194,6 +194,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Grievence_Management_System_Project.Controllers.DiscussionController",
+    "Method": "GetUnreadMessages",
+    "RelativePath": "api/Discussion/unreadMessages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Grievence_Management_System_Project.Controllers.GrievanceController",
     "Method": "GetAssignedGrievances",
     "RelativePath": "api/Grievance/assigned",

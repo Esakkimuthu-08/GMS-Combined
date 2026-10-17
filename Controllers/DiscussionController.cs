@@ -2,7 +2,9 @@
 using Grievence_Management_System_Project.Model;
 using Grievence_Management_System_Project.Request;
 using Grievence_Management_System_Project.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Grievence_Management_System_Project.Controllers
 {
@@ -68,6 +70,17 @@ namespace Grievence_Management_System_Project.Controllers
 
             return NoContent();
 
+        }
+
+        [HttpGet("unreadMessages")]
+        public async Task<IActionResult> GetUnreadMessages()
+        {
+            string email = User.FindFirst("Email")?.Value
+                ?? throw new UnauthorizedAccessException();
+
+            var result = await discussionService.GetUnreadMessages(email);
+
+            return Ok(result);
         }
     }
 
