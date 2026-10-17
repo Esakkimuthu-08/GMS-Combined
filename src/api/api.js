@@ -12,7 +12,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,9 +29,9 @@ apiClient.interceptors.response.use(
       const requestUrl = error.config?.url || "";
       const isLoginRequest = requestUrl.includes("/Approval/login");
       if (!isLoginRequest) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        localStorage.removeItem("gms-auth-store");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("role");
+        sessionStorage.removeItem("gms-auth-store");
         window.location.href = "/";
       }
     }

@@ -19,8 +19,8 @@ export const grievanceService = {
   raiseGrievance: (payload) =>
     apiClient.post("/Grievance/raiseGrievance", payload),
 
-  updateGrievanceStatus: (id, status) =>
-    apiClient.patch(`/Grievance/${id}/status`, { status }),
+  updateGrievanceStatus: (grievanceId, grievanceStatus) =>
+    apiClient.put("/Grievance/updateStatus", { grievanceId, grievanceStatus }),
 
   assignGrievance: (id, staffId) =>
     apiClient.patch(`/Grievance/${id}/assign`, { staffId }),

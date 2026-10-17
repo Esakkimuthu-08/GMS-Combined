@@ -1,6 +1,10 @@
 import "./index.css";
 import { Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "./stores/useAuthStore";
+import { getAuthQueryScope } from "./api/hook";
 
 
 // Pages
@@ -34,9 +38,26 @@ import PublicRoute from "./pages/auth/public-route";
 
 const queryClient = new QueryClient();
 
+function AuthQueryCacheLifecycle() {
+  const client = useQueryClient();
+
+  useEffect(() => {
+    let previous = useAuthStore.getState();
+    return useAuthStore.subscribe((state) => {
+      const previousScope = getAuthQueryScope(previous.role, previous.user).join(":");
+      const nextScope = getAuthQueryScope(state.role, state.user).join(":");
+      if (previousScope !== nextScope) client.clear();
+      previous = state;
+    });
+  }, [client]);
+
+  return null;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthQueryCacheLifecycle />
       <Routes>
         {/* Public */}
         <Route

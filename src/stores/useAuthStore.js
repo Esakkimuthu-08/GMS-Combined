@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 export const useAuthStore = create(
   persist(
@@ -13,13 +13,13 @@ export const useAuthStore = create(
         set({
           token,
           user,
-          role: user.role,
+          role: (user.Role ?? user.role)?.toLowerCase(),
           isAuthenticated: true,
         }),
 
       logout: () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("role");
         set({
           token: null,
           user: null,
@@ -30,6 +30,7 @@ export const useAuthStore = create(
     }),
     {
       name: "gms-auth-store",
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         token: state.token,
         user: state.user,

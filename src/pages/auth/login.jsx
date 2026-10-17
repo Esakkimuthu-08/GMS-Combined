@@ -29,8 +29,8 @@ export const Login = () => {
       const token = response.data.token;
       const decodedUser = jwtDecode(token);
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", decodedUser.Role?.toLowerCase());
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("role", decodedUser.Role?.toLowerCase());
 
       login(token, decodedUser);
 

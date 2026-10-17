@@ -1,7 +1,9 @@
 import { jwtDecode } from "jwt-decode";
 
 export const getTokenFromStorage = () => {
-  return localStorage.getItem("token") || null;
+
+  return sessionStorage.getItem("token") || null;
+  
 };
 
 export const isTokenExpired = (token) => {

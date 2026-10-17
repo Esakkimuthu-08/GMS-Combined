@@ -1,31 +1,92 @@
 import StaffAdminLayout from "../../layouts/StaffAdminLayout";
-import { Eye, MessageSquare, X, ArrowLeft } from "lucide-react";
+import { Eye, MessageSquare, X, Loader2, CircleCheck, AlertCircle, ChevronDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { grievanceService } from "../../api/grievanceService";
 import { TableRowSkeleton } from "../../components/common/SkeletonLoader";
 import ErrorMessage from "../../components/common/ErrorMessage";
-import { getStatusLabel, getStatusBadgeClass, getPriorityBadgeClass } from "../../utils/statusHelpers";
+import { getStatusLabel, getStatusBadgeClass, getPriorityBadgeClass, getStatusValue } from "../../utils/statusHelpers";
 import { ViewButton } from "@/common/viewButton";
 import Discussion from "@/components/Discussion";
-import React, { useState } from "react";
+import { Hook, getAuthQueryScope, staffGrievancesQueryKey } from "@/api/hook";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useSearchParams } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 
 
 
 export default function StaffGrievances() {
   const [selectedGrievance, setSelectedGrievance] = useState(null);
   const [replyGrievance, setReplyGrievance] = useState(null);
+  const [pendingStatusId, setPendingStatusId] = useState(null);
+  const [statusNotice, setStatusNotice] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedGrievanceId = searchParams.get("replyGrievanceId");
+  const role = useAuthStore((state) => state.role);
+  const user = useAuthStore((state) => state.user);
+  const scope = getAuthQueryScope(role, user);
+  const { data: unreadCounts = [] } = Hook.UnreadMessages();
+  const updateStatus = Hook.UpdateGrievanceStatus();
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["staff-grievances-list"],
+    queryKey: staffGrievancesQueryKey(scope),
     queryFn: () => grievanceService.getStaffGrievances(),
-    select: (res) => res.data?.grievances ?? res.data,
+    select: (res) => {
+      const list = res.data?.grievances ?? res.data;
+      return Array.isArray(list) ? list : [];
+    },
+    staleTime: 1000 * 30,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    enabled: Boolean(user),
   });
 
-  const grievances = data || [];
+  const grievances = useMemo(() => data ?? [], [data]);
+  const unreadByGrievance = new Map(unreadCounts.map((item) => [
+    String(item.grievanceId ?? item.GrievanceId),
+    Number(item.unreadCount ?? item.UnreadCount ?? 0),
+  ]));
 
-  const mapStatus = (status) => {
-    const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
-    return statusMap[status] || "open";
+  useEffect(() => {
+    if (!requestedGrievanceId) return;
+    const match = grievances.find((g) => String(g.id) === requestedGrievanceId);
+    if (!match) return;
+    setReplyGrievance(match);
+    const params = new URLSearchParams(searchParams);
+    params.delete("replyGrievanceId");
+    setSearchParams(params, { replace: true });
+  }, [requestedGrievanceId, grievances, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (!statusNotice) return undefined;
+    const timeoutId = window.setTimeout(() => setStatusNotice(null), 4000);
+    return () => window.clearTimeout(timeoutId);
+  }, [statusNotice]);
+
+  const handleStatusChange = async (grievance, selectedValue) => {
+    const grievanceStatus = Number(selectedValue);
+    const grievanceId = Number(grievance.id);
+    const currentStatus = getStatusValue(grievance.status);
+    if (!Number.isInteger(grievanceId) || !Number.isInteger(grievanceStatus) ||
+      currentStatus === grievanceStatus || updateStatus.isPending) return;
+    if ((grievanceStatus === 2 || grievanceStatus === 3) &&
+      !window.confirm(`Change ${grievance.ticketId} to ${getStatusLabel(grievanceStatus)}?`)) return;
+
+    setPendingStatusId(grievanceId);
+    setStatusNotice(null);
+    try {
+      await updateStatus.mutateAsync({ grievanceId, grievanceStatus });
+      setStatusNotice({
+        type: "success",
+        message: `${grievance.ticketId} updated to ${getStatusLabel(grievanceStatus)}.`,
+      });
+    } catch (updateError) {
+      setStatusNotice({
+        type: "error",
+        message: updateError.response?.data?.message ?? "Status update failed. The previous status was kept.",
+      });
+    } finally {
+      setPendingStatusId(null);
+    }
   };
 
   return (
@@ -33,6 +94,17 @@ export default function StaffGrievances() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Assigned Grievances</h1>
         <p className="text-sm text-gray-500 mb-6">Manage and respond to grievances assigned to you</p>
+
+        {statusNotice && (
+          <div
+            className={`fixed right-5 top-20 z-[110] flex max-w-sm items-start gap-2 rounded-xl border px-4 py-3 text-sm shadow-lg ${statusNotice.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-rose-200 bg-rose-50 text-rose-800"}`}
+            role={statusNotice.type === "error" ? "alert" : "status"}
+            aria-live={statusNotice.type === "error" ? "assertive" : "polite"}
+          >
+            {statusNotice.type === "success" ? <CircleCheck size={17} className="mt-0.5 shrink-0" /> : <AlertCircle size={17} className="mt-0.5 shrink-0" />}
+            <span>{statusNotice.message}</span>
+          </div>
+        )}
 
         {isError && (
           <ErrorMessage
@@ -67,9 +139,25 @@ export default function StaffGrievances() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(mapStatus(g.status))}`}>
-                          {getStatusLabel(mapStatus(g.status))}
-                        </span>
+                        <div className="inline-flex items-center gap-2">
+                          <span className="relative inline-flex">
+                            <select
+                              aria-label={`Update status for ${g.ticketId}`}
+                              value={getStatusValue(g.status) ?? ""}
+                              disabled={updateStatus.isPending}
+                              onChange={(event) => handleStatusChange(g, event.target.value)}
+                              className={`max-w-full cursor-pointer appearance-none rounded-full border py-1 pl-2.5 pr-7 text-xs font-semibold outline-none transition focus:ring-2 focus:ring-[#3A5B22]/30 disabled:cursor-wait disabled:opacity-60 ${getStatusBadgeClass(g.status)}`}
+                            >
+                              {getStatusValue(g.status) === null && <option value="" disabled>Unknown status</option>}
+                              <option value={0}>Pending</option>
+                              <option value={1}>In Progress</option>
+                              <option value={2}>Resolved</option>
+                              <option value={3}>Rejected</option>
+                            </select>
+                            <ChevronDown size={13} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 opacity-60" aria-hidden="true" />
+                          </span>
+                          {pendingStatusId === Number(g.id) && <Loader2 size={14} className="animate-spin text-slate-400" aria-label="Saving status" />}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex gap-1">
@@ -81,9 +169,12 @@ export default function StaffGrievances() {
                           </button>
                           <button
                             onClick={() => setReplyGrievance(g)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors"
+                            className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#3A5B22] hover:bg-[#3A5B22]/10 rounded-lg transition-colors"
                           >
                             <MessageSquare size={14} /> Reply
+                            {(unreadByGrievance.get(String(g.id)) ?? 0) > 0 && (
+                              <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-blue-500" title="Unread messages" aria-label="Unread messages" />
+                            )}
                           </button>
                         </div>
                       </td>
@@ -92,7 +183,6 @@ export default function StaffGrievances() {
               </tbody>
             </table>
 
-            {/* View details modal (existing behaviour — untouched) */}
             {selectedGrievance && (
               <ViewButton
                 grievance={selectedGrievance}

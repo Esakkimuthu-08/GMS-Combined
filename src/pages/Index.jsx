@@ -5,7 +5,7 @@ export default function Index() {
   const navigate = useNavigate();
 
   const handleRoleSelect = (role) => {
-    localStorage.setItem("role", role); 
+    sessionStorage.setItem("role", role); 
     if (role === "student") {
       navigate("/student/login");
     } else if (role === "staff") {

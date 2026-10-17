@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Home, FilePlus, List, LogOut, Menu, X, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
+import NotificationCenter from "../components/common/NotificationCenter";
 
 export function StudentLayout({ children }) {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export function StudentLayout({ children }) {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-8">
               <div className="font-bold text-lg tracking-tight">
-                🎓 Grievance Portal
+                Grievance Portal
               </div>
 
               <div className="hidden md:flex gap-1">
@@ -55,6 +56,7 @@ export function StudentLayout({ children }) {
             </div>
 
             <div className="flex items-center gap-3">
+              <NotificationCenter role="student" />
               <button
                 onClick={handleLogout}
                 className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-md transition-colors"

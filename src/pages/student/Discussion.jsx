@@ -1,5 +1,5 @@
 import { StudentLayout } from "@/layouts/StudentLayout";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
     Search,
     Filter,
@@ -14,15 +14,21 @@ import {
     Loader2,
     RefreshCw,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { grievanceService } from "@/api/grievanceService";
 import Discussion from "@/components/Discussion";
+import { Hook } from "@/api/hook";
+import { useSearchParams } from "react-router-dom";
+import { formatIndiaTimestamp } from "@/utils/dateTime";
 
 function StudentDiscussion() {
-    const [selectedGrievanceId, setSelectedGrievanceId] = useState(null);
+    const [searchParams] = useSearchParams();
+    const requestedGrievanceId = searchParams.get("grievanceId");
+    const [selectedGrievanceId, setSelectedGrievanceId] = useState(() =>
+        requestedGrievanceId ?? null
+    );
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [categoryFilter, setCategoryFilter] = useState("all");
+    const { data: unreadCounts = [] } = Hook.UnreadMessages();
 
     const {
         data,
@@ -30,20 +36,26 @@ function StudentDiscussion() {
         isError,
         error,
         refetch,
-    } = useQuery({
-        queryKey: ["student-grievances-list"],
-        queryFn: () => grievanceService.getStudentGrievances(),
-        select: (res) => res.data?.grievances ?? res.data ?? [],
-    });
+    } = Hook.StudentGrievances();
 
-    const grievances = data ?? [];
+    const grievances = useMemo(() => data ?? [], [data]);
+
+    useEffect(() => {
+        if (requestedGrievanceId && grievances.some((g) => String(g.id) === requestedGrievanceId)) {
+            setSelectedGrievanceId(grievances.find((g) => String(g.id) === requestedGrievanceId).id);
+        }
+    }, [requestedGrievanceId, grievances]);
 
     const mapStatus = (status) => {
-        const m = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
-        return m[status] ?? "open";
+        const statusMap = { 0: "Pending", 1: "InProgress", 2: "Resolved", 3: "Rejected" };
+        return statusMap[status] ?? "Pending";
     };
 
-    const activeGrievance = grievances.find((g) => g.id === selectedGrievanceId);
+    const activeGrievance = grievances.find((g) => String(g.id) === String(selectedGrievanceId));
+    const unreadByGrievance = new Map(unreadCounts.map((item) => [
+        String(item.grievanceId ?? item.GrievanceId),
+        Number(item.unreadCount ?? item.UnreadCount ?? 0),
+    ]));
 
     const filteredGrievances = grievances.filter((g) => {
         const matchesSearch =
@@ -55,7 +67,7 @@ function StudentDiscussion() {
         const matchesStatus = statusFilter === "all" || gStatus === statusFilter;
         const matchesCategory =
             categoryFilter === "all" ||
-            (g.grievanceCategory ?? g.category ?? "")
+            String(g.grievanceCategory ?? g.category ?? "")
                 .toLowerCase() === categoryFilter.toLowerCase();
 
         return matchesSearch && matchesStatus && matchesCategory;
@@ -64,16 +76,16 @@ function StudentDiscussion() {
     const getStatusBadge = (rawStatus) => {
         const status = typeof rawStatus === "number" ? mapStatus(rawStatus) : rawStatus;
         switch (status) {
-            case "open":
-                return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-100">Open</span>;
-            case "in_progress":
+            case "Pending":
+                return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">Pending</span>;
+            case "InProgress":
                 return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">In Progress</span>;
-            case "resolved":
+            case "Resolved":
                 return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">Resolved</span>;
-            case "closed":
-                return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">Closed</span>;
+            case "Rejected":
+                return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">Rejected</span>;
             default:
-                return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">New</span>;
+                return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">Pending</span>;
         }
     };
 
@@ -91,12 +103,11 @@ function StudentDiscussion() {
     };
 
     const formatMessageTime = (isoString) => {
-        if (!isoString) return "";
-        return new Date(isoString).toLocaleTimeString("en-US", {
+        return formatIndiaTimestamp(isoString, {
             hour: "numeric",
             minute: "2-digit",
             hour12: true,
-        });
+        }, "en-US");
     };
 
     return (
@@ -143,10 +154,10 @@ function StudentDiscussion() {
                                 className="pl-7 pr-3 py-2 text-xs border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#3A5B22]/20 focus:border-[#3A5B22] appearance-none cursor-pointer"
                             >
                                 <option value="all">All Statuses</option>
-                                <option value="open">Open</option>
-                                <option value="in_progress">In Progress</option>
-                                <option value="resolved">Resolved</option>
-                                <option value="closed">Closed</option>
+                                <option value="Pending">Pending</option>
+                                <option value="InProgress">In Progress</option>
+                                <option value="Resolved">Resolved</option>
+                                <option value="Rejected">Rejected</option>
                             </select>
                         </div>
                     </div>
@@ -189,7 +200,8 @@ function StudentDiscussion() {
                             )}
 
                             {!isLoading && !isError && filteredGrievances.map((g) => {
-                                const isActive = g.id === selectedGrievanceId;
+                                const isActive = String(g.id) === String(selectedGrievanceId);
+                                const hasUnread = (unreadByGrievance.get(String(g.id)) ?? 0) > 0;
                                 return (
                                     <div
                                         key={g.id}
@@ -204,6 +216,12 @@ function StudentDiscussion() {
                                                     {g.ticketId}
                                                 </span>
                                                 {getPriorityIndicator(g.priority)}
+                                                {hasUnread && (
+                                                    <span
+                                                        className="w-2 h-2 rounded-full bg-blue-500 shrink-0"
+                                                        title="Unread messages"
+                                                    />
+                                                )}
                                             </div>
                                             <span className="text-[10px] text-gray-400">
                                                 {formatMessageTime(g.updatedAt ?? g.createdAt)}

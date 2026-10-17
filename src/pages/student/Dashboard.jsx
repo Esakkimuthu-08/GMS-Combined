@@ -1,32 +1,26 @@
 import { StudentLayout } from "../../layouts/StudentLayout";
 import { FileText, Clock, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { grievanceService } from "../../api/grievanceService";
 import { CardSkeleton } from "../../components/common/SkeletonLoader";
+import { Hook } from "@/api/hook";
+import { getStatusValue } from "@/utils/statusHelpers";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function StudentDashboard() {
+  const { data: grievances = [], isLoading } = Hook.StudentGrievances();
+  const user = useAuthStore((state) => state.user);
+  const userEmail = (user?.Email ?? user?.email ?? "");
 
-  const role = useAuthStore((state) => state.role);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["student-grievances"],
-    queryFn: () => grievanceService.getStudentGrievances(),
-    select: (res) => res.data,
-    enabled: role?.role == "student",
-    staleTime: 1000 * 60 * 5,
-  })
-
-
-  const displayName = data?.[0]?.student?.name ?? "Student";
-
+  const displayName =
+    userEmail.split("@")[0]
+      ?.replace(/[._-]/g, " ")
+      ?.replace(/\b\w/g, char => char.toUpperCase()) ?? "Student";
 
 
   const stats = [
     {
       label: "Total Grievances",
-      value: data?.length ?? 0,
+      value: grievances.length,
       icon: FileText,
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600",
@@ -34,7 +28,7 @@ export default function StudentDashboard() {
     },
     {
       label: "In Progress",
-      value: data?.inProgress ?? 3,
+      value: grievances.filter((g) => getStatusValue(g.status) === 1).length,
       icon: Clock,
       bgColor: "bg-yellow-50",
       iconColor: "text-yellow-600",
@@ -42,7 +36,7 @@ export default function StudentDashboard() {
     },
     {
       label: "Resolved",
-      value: data?.resolved ?? 5,
+      value: grievances.filter((g) => getStatusValue(g.status) === 2).length,
       icon: CheckCircle,
       bgColor: "bg-green-50",
       iconColor: "text-green-600",

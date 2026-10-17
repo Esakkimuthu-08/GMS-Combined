@@ -11,8 +11,9 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useState } from "react";
+import { createElement, useState } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
+import NotificationCenter from "../components/common/NotificationCenter";
 
 export default function StaffAdminLayout({ children }) {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ export default function StaffAdminLayout({ children }) {
         <div className="flex items-center justify-between px-4 h-16 border-b">
           {sidebarOpen && (
             <span className="font-bold text-[#3A5B22] text-sm tracking-tight truncate">
-              🏛️ Grievance Portal
+              Grievance Portal
             </span>
           )}
           <button
@@ -74,7 +75,7 @@ export default function StaffAdminLayout({ children }) {
         )}
 
         <nav className="flex-1 px-3 py-3 space-y-1">
-          {navItems.map(({ path, label, icon: Icon }) => (
+          {navItems.map(({ path, label, icon }) => (
             <Link
               key={path}
               to={path}
@@ -84,7 +85,7 @@ export default function StaffAdminLayout({ children }) {
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 }`}
             >
-              <Icon size={18} className="shrink-0" />
+              {createElement(icon, { size: 18, className: "shrink-0" })}
               {sidebarOpen && <span className="truncate">{label}</span>}
             </Link>
           ))}
@@ -107,6 +108,7 @@ export default function StaffAdminLayout({ children }) {
           <div className="text-sm text-gray-500">
             <span className="font-semibold text-gray-900 capitalize">{role}</span> Panel
           </div>
+          <NotificationCenter role={role} variant="light" />
           {user && (
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <div className="w-8 h-8 rounded-full bg-[#3A5B22] text-white flex items-center justify-center font-semibold text-xs">

@@ -25,8 +25,8 @@ export default function AdminGrievances() {
 
 
   const mapStatus = (status) => {
-    const statusMap = { 0: "new", 1: "open", 2: "in_progress", 3: "resolved", 4: "closed" };
-    return statusMap[status] || "open";
+    const statusMap = { 0: "Pending", 1: "InProgress", 2: "Resolved", 3: "Rejected" };
+    return statusMap[status] || "New";
   };
 
   const handleFilter = (e) => {

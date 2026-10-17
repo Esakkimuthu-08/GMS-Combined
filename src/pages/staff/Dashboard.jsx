@@ -5,21 +5,27 @@ import { useQuery } from "@tanstack/react-query";
 import { grievanceService } from "../../api/grievanceService";
 import { CardSkeleton } from "../../components/common/SkeletonLoader";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { getAuthQueryScope, staffGrievancesQueryKey } from "@/api/hook";
+import { getStatusValue } from "@/utils/statusHelpers";
 
 export default function StaffDashboard() {
   const role = useAuthStore(state => state.role)
+  const user = useAuthStore(state => state.user)
+  const scope = getAuthQueryScope(role, user)
   const { data, isLoading } = useQuery({
-    queryKey: ["staff-grievances"],
+    queryKey: staffGrievancesQueryKey(scope),
     queryFn: () => grievanceService.getStaffGrievances(),
-    select: (res) => res.data,
-    enabled: role?.role == "staff",
-    staleTime: 1000 * 60 * 5,
+    select: (res) => res.data?.grievances ?? res.data ?? [],
+    enabled: role === "staff" && Boolean(user),
+    staleTime: 1000 * 30,
   });
+
+  const grievances = data ?? [];
 
   const stats = [
     {
       label: "Assigned Grievances",
-      value: data?.assigned ?? 12,
+      value: grievances.length,
       icon: ClipboardList,
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600",
@@ -27,15 +33,15 @@ export default function StaffDashboard() {
     },
     {
       label: "Pending Responses",
-      value: data?.pending ?? 5,
+      value: grievances.filter((g) => getStatusValue(g.status) === 0).length,
       icon: Clock,
       bgColor: "bg-orange-50",
       iconColor: "text-orange-600",
       border: "border-orange-100",
     },
     {
-      label: "Resolved Today",
-      value: data?.resolvedToday ?? 2,
+      label: "Resolved",
+      value: grievances.filter((g) => getStatusValue(g.status) === 2).length,
       icon: CheckCircle,
       bgColor: "bg-green-50",
       iconColor: "text-green-600",

@@ -10,6 +10,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { CardSkeleton } from "../../components/common/SkeletonLoader";
+import { useAuthStore } from "@/stores/useAuthStore";
 import {
   BarChart,
   Bar,
@@ -45,18 +46,22 @@ const categoryData = [
 const PIE_COLORS = ["#3A5B22", "#5B8A38", "#82B14E", "#A8D170", "#C9E8A0", "#E4F5C8"];
 
 export default function AdminDashboard() {
+  const role = useAuthStore((state) => state.role);
+
   const { data, isLoading } = useQuery({
     queryKey: ["admin-grievances"],
     queryFn: () => grievanceService.getAllGrievances(),
     select: (res) => res.data,
-    enabled: role == "admin",
+    enabled: role === "admin",
     staleTime: 1000 * 60 * 5,
   });
+
+  const grievances = data ?? [];
 
   const stats = [
     {
       label: "Total Grievances",
-      value: data?.total ?? 245,
+      value: grievances.length,
       icon: FileText,
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600",
@@ -64,7 +69,7 @@ export default function AdminDashboard() {
     },
     {
       label: "Open",
-      value: data?.open ?? 32,
+      value: grievances.filter((g) => g.status === 0).length,
       icon: AlertCircle,
       bgColor: "bg-red-50",
       iconColor: "text-red-600",
@@ -72,7 +77,7 @@ export default function AdminDashboard() {
     },
     {
       label: "In Process",
-      value: data?.inProgress ?? 58,
+      value: grievances.filter((g) => g.status === 1).length,
       icon: Clock,
       bgColor: "bg-orange-50",
       iconColor: "text-orange-600",
@@ -80,15 +85,15 @@ export default function AdminDashboard() {
     },
     {
       label: "Resolved",
-      value: data?.closed ?? 145,
+      value: grievances.filter((g) => g.status === 2).length,
       icon: CheckCircle,
       bgColor: "bg-green-50",
       iconColor: "text-green-600",
       border: "border-green-100",
     },
     {
-      label: "Reopened",
-      value: data?.reopened ?? 10,
+      label: "Rejected",
+      value: grievances.filter((g) => g.status === 3).length,
       icon: RotateCcw,
       bgColor: "bg-purple-50",
       iconColor: "text-purple-600",
