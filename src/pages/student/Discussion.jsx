@@ -52,6 +52,7 @@ function StudentDiscussion() {
     };
 
     const activeGrievance = grievances.find((g) => String(g.id) === String(selectedGrievanceId));
+    const isConversationOpen = Boolean(activeGrievance && selectedGrievanceId);
     const unreadByGrievance = new Map(unreadCounts.map((item) => [
         String(item.grievanceId ?? item.GrievanceId),
         Number(item.unreadCount ?? item.UnreadCount ?? 0),
@@ -112,9 +113,9 @@ function StudentDiscussion() {
 
     return (
         <StudentLayout>
-            <div className="flex flex-col h-[calc(100vh-10.5rem)] min-h-[580px] bg-gray-50/20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="-mb-8 flex h-[calc(100dvh-6rem)] min-h-0 flex-col overflow-hidden rounded-2xl border border-gray-100 bg-gray-50/20 shadow-sm lg:mb-0 lg:h-[calc(100vh-10.5rem)] lg:min-h-[580px]">
 
-                <div className="bg-white border-b border-gray-100 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className={`${isConversationOpen ? "hidden lg:flex" : "flex"} bg-white border-b border-gray-100 px-4 py-3 md:px-6 md:py-4 flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4`}>
                     <div>
                         <h1 className="text-xl font-bold text-gray-900 tracking-tight">My Discussions</h1>
                         <p className="text-xs text-gray-500">Communicate about your grievances with staff</p>
@@ -163,10 +164,10 @@ function StudentDiscussion() {
                     </div>
                 </div>
 
-                <div className="flex flex-1 overflow-hidden relative">
+                <div className="relative flex min-h-0 flex-1 overflow-hidden">
 
-                    <div className={`w-full md:w-[360px] lg:w-[400px] border-r border-gray-100 flex flex-col h-full bg-white transition-all duration-200 shrink-0 ${activeGrievance && selectedGrievanceId ? 'hidden md:flex' : 'flex'}`}>
-                        <div className="flex-1 overflow-y-auto divide-y divide-gray-50" style={{ scrollbarWidth: "thin" }}>
+                    <div className={`w-full lg:w-[400px] border-r border-gray-100 flex flex-col h-full min-h-0 bg-white transition-all duration-200 shrink-0 ${isConversationOpen ? 'hidden lg:flex' : 'flex'}`}>
+                        <div className="min-h-0 flex-1 overflow-y-auto divide-y divide-gray-50" style={{ scrollbarWidth: "thin" }}>
 
                             {isLoading && (
                                 <div className="flex flex-col items-center justify-center h-full gap-3 p-8">
@@ -242,38 +243,40 @@ function StudentDiscussion() {
                         </div>
                     </div>
 
-                    <div className={`flex-1 flex flex-col h-full bg-white transition-all duration-200 ${!activeGrievance ? 'hidden md:flex' : 'flex'}`}>
+                    <div className={`flex-1 flex flex-col h-full min-h-0 min-w-0 bg-white transition-all duration-200 ${!activeGrievance ? 'hidden lg:flex' : 'flex'}`}>
                         {activeGrievance ? (
                             <>
-                                <div className="bg-white border-b border-gray-100 p-5 flex flex-col gap-3">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
+                                <div className="flex shrink-0 flex-col gap-2 border-b border-gray-100 bg-white p-3 md:gap-3 md:p-5">
+                                    <div className="flex min-w-0 items-start justify-between gap-2">
+                                        <div className="flex min-w-0 items-start gap-2 md:items-center md:gap-3">
                                             <button
+                                                type="button"
                                                 onClick={() => setSelectedGrievanceId(null)}
-                                                className="p-1 rounded-lg hover:bg-gray-100 md:hidden text-gray-500 transition-colors"
+                                                className="mt-0.5 rounded-lg p-1 text-gray-500 transition-colors hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3A5B22] lg:hidden"
                                                 title="Back to inbox"
+                                                aria-label="Back to grievance list"
                                             >
                                                 <ArrowLeft size={18} />
                                             </button>
 
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-sm font-bold text-[#3A5B22]">{activeGrievance.ticketId}</span>
-                                                <span className="text-xs text-gray-400 font-medium px-2 py-0.5 bg-gray-50 border border-gray-100 rounded-md">
+                                            <div className="flex min-w-0 flex-wrap items-center gap-2">
+                                                <span className="text-xs font-bold text-[#3A5B22] md:text-sm">{activeGrievance.ticketId}</span>
+                                                <span className="hidden rounded-md border border-gray-100 bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-400 md:inline-flex">
                                                     {activeGrievance.grievanceCategory ?? activeGrievance.category}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex shrink-0 items-center gap-2">
                                             {getStatusBadge(activeGrievance.status)}
                                         </div>
                                     </div>
 
-                                    <h2 className="text-md font-bold text-gray-900 leading-snug">
+                                    <h2 className="break-words text-sm font-bold leading-snug text-gray-900 md:text-base">
                                         {activeGrievance.subject}
                                     </h2>
 
-                                    <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-gray-500 bg-gray-50/50 rounded-xl p-3 border border-gray-100">
+                                    <div className="hidden flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-gray-100 bg-gray-50/50 p-3 text-xs text-gray-500 lg:flex">
                                         {activeGrievance.student && (
                                             <>
                                                 <div className="flex items-center gap-1.5">
@@ -304,6 +307,12 @@ function StudentDiscussion() {
                                             </>
                                         )}
                                     </div>
+                                    {activeGrievance.assignedToStaff?.name && (
+                                        <div className="flex min-w-0 items-center gap-1.5 text-xs text-gray-500 lg:hidden">
+                                            <UserCheck size={13} className="shrink-0 text-gray-400" />
+                                            <span className="truncate">Assigned: {activeGrievance.assignedToStaff.name}</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <Discussion grievanceId={activeGrievance.id} />

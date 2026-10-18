@@ -1,5 +1,5 @@
 import "./index.css";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -98,6 +98,7 @@ function App() {
             </PublicRoute>
           }
         />
+        <Route path="/admin/signup" element={<Navigate to="/admin/login" replace />} />
 
         {/* Student */}
         <Route

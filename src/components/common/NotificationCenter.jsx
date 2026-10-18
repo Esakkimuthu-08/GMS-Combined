@@ -142,9 +142,9 @@ export default function NotificationCenter({ role = "student", variant = "dark" 
         <section
           role="dialog"
           aria-label="Notifications"
-          className="absolute right-0 top-[calc(100%+12px)] z-[100] w-[calc(100vw-2rem)] max-w-[390px] overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-[0_20px_60px_-18px_rgba(15,23,42,0.32)] sm:w-[390px]"
+          className="fixed inset-x-3 top-[4.5rem] z-[100] flex max-h-[calc(100dvh-5rem)] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-[0_20px_60px_-18px_rgba(15,23,42,0.32)] md:absolute md:inset-x-auto md:right-0 md:top-[calc(100%+12px)] md:max-h-none md:w-[390px]"
         >
-          <div className="flex items-start justify-between border-b border-slate-100 px-5 py-4">
+          <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-4 py-3 sm:px-5 sm:py-4">
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm font-bold text-slate-900">Notifications</h2>
@@ -152,18 +152,18 @@ export default function NotificationCenter({ role = "student", variant = "dark" 
               </div>
               <p className="mt-1 text-xs text-slate-500">Updates about your grievances</p>
             </div>
-            <button type="button" onClick={() => setOpen(false)} aria-label="Close notifications" className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
+            <button type="button" onClick={() => setOpen(false)} aria-label="Close notifications" className="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700">
               <X size={16} />
             </button>
           </div>
 
           {actionError && (
-            <p role="alert" className="flex items-center gap-2 border-b border-rose-100 bg-rose-50 px-5 py-2.5 text-xs text-rose-700">
+            <p role="alert" className="flex shrink-0 items-center gap-2 border-b border-rose-100 bg-rose-50 px-4 py-2.5 text-xs text-rose-700 sm:px-5">
               <AlertCircle size={14} className="shrink-0" />{actionError}
             </p>
           )}
 
-          <div className="max-h-[min(65vh,440px)] overflow-y-auto">
+          <div className="min-h-0 flex-1 overflow-y-auto md:max-h-[min(65vh,440px)] md:flex-none">
             {isLoading ? (
               <div className="flex items-center justify-center gap-2 px-6 py-10 text-sm text-slate-500" role="status">
                 <Loader2 size={17} className="animate-spin" /> Loading notifications…
@@ -192,19 +192,19 @@ export default function NotificationCenter({ role = "student", variant = "dark" 
                   type="button"
                   onClick={() => openNotification(item)}
                   disabled={markOne.isPending}
-                  className={`flex w-full gap-3 border-b border-slate-100 px-5 py-4 text-left transition hover:bg-slate-50 disabled:opacity-60 ${isUnread ? "bg-[#3A5B22]/[0.035]" : "bg-white"}`}
+                  className={`flex w-full gap-3 border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 disabled:opacity-60 sm:px-5 sm:py-4 ${isUnread ? "bg-[#3A5B22]/[0.035]" : "bg-white"}`}
                 >
                   <span className={`mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl ${isUnread ? "bg-[#3A5B22]/10 text-[#3A5B22]" : "bg-slate-100 text-slate-500"}`}>
                     <Icon size={17} />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="flex items-start justify-between gap-2">
-                      <span className="text-xs font-semibold text-slate-800">{message}</span>
+                    <span className="flex min-w-0 items-start justify-between gap-2">
+                      <span className="min-w-0 break-words text-xs font-semibold text-slate-800 [overflow-wrap:anywhere]">{message}</span>
                       {isUnread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#3A5B22]" />}
                     </span>
-                    <span className="mt-2 flex items-center gap-2 text-[10px] font-medium text-slate-400">
-                      <span className="text-[#3A5B22]">{item.grievanceId ?? item.GrievanceId ? `Grievance #${item.grievanceId ?? item.GrievanceId}` : "Grievance update"}</span>
-                      <span className="px-1">·</span><time dateTime={item.createdAt ?? item.CreatedAt}>{formatTimestamp(item.createdAt ?? item.CreatedAt)}</time>
+                    <span className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-medium text-slate-400">
+                      <span className="min-w-0 break-words text-[#3A5B22] [overflow-wrap:anywhere]">{item.grievanceId ?? item.GrievanceId ? `Grievance #${item.grievanceId ?? item.GrievanceId}` : "Grievance update"}</span>
+                      <span>·</span><time className="min-w-0 break-words" dateTime={item.createdAt ?? item.CreatedAt}>{formatTimestamp(item.createdAt ?? item.CreatedAt)}</time>
                     </span>
                   </span>
                 </button>
@@ -212,9 +212,9 @@ export default function NotificationCenter({ role = "student", variant = "dark" 
             })}
           </div>
 
-          <div className="flex items-center justify-between bg-slate-50 px-5 py-3">
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 bg-slate-50 px-4 py-3 sm:px-5">
             <span className="text-[10px] text-slate-400">{isFetching ? "Updating…" : "Updates every 10 seconds"}</span>
-            <button type="button" onClick={markAllRead} disabled={!unreadCount || markAllPending} className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#3A5B22] hover:text-[#2e4a1a] disabled:cursor-default disabled:text-slate-400" title="Marks notifications one at a time">
+            <button type="button" onClick={markAllRead} disabled={!unreadCount || markAllPending} className="inline-flex min-h-10 items-center gap-1.5 text-xs font-semibold text-[#3A5B22] hover:text-[#2e4a1a] disabled:cursor-default disabled:text-slate-400" title="Marks notifications one at a time">
               {markAllPending ? <Loader2 size={14} className="animate-spin" /> : <CheckCheck size={14} />}
               Mark all read
             </button>

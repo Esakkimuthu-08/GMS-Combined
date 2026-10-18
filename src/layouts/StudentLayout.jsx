@@ -35,7 +35,7 @@ export function StudentLayout({ children }) {
                 Grievance Portal
               </div>
 
-              <div className="hidden md:flex gap-1">
+              <div className="hidden lg:flex gap-1">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -59,7 +59,7 @@ export function StudentLayout({ children }) {
               <NotificationCenter role="student" />
               <button
                 onClick={handleLogout}
-                className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-md transition-colors"
+                className="hidden sm:flex md:hidden lg:flex items-center gap-2 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-md transition-colors"
               >
                 <LogOut size={16} />
                 Logout
@@ -67,7 +67,7 @@ export function StudentLayout({ children }) {
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 rounded-md hover:bg-white/10 transition-colors"
+                className="lg:hidden p-2 rounded-md hover:bg-white/10 transition-colors"
               >
                 {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
@@ -75,7 +75,7 @@ export function StudentLayout({ children }) {
           </div>
 
           {mobileMenuOpen && (
-            <div className="md:hidden pb-4 space-y-1 border-t border-white/10 pt-3">
+            <div className="lg:hidden pb-4 space-y-1 border-t border-white/10 pt-3">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (

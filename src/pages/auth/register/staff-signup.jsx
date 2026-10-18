@@ -4,6 +4,7 @@ import img from "../../../assets/welcome.png";
 import { authService } from "../../../api/authService";
 import ErrorMessage from "../../../components/common/ErrorMessage";
 import LoadingSpinner from "../../../components/common/LoadingSpinner";
+import SignupMobileNavigation from "./signup-mobile-navigation";
 
 export const StaffsignUp = () => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export const StaffsignUp = () => {
     try {
       await authService.staffSignUp(payload);
       setSuccess(true);
-      setTimeout(() => navigate("/staff/login"), 2000);
+      setTimeout(() => navigate("/staff/login", { replace: true }), 2000);
     } catch (err) {
       if (err.response?.status === 400) {
         setError("User already exists with this email.");
@@ -55,15 +56,16 @@ export const StaffsignUp = () => {
   };
 
   const inputClass =
-    "border text-sm rounded-lg px-3 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[#3A5B22]/40 focus:border-[#3A5B22] transition";
+    "min-h-[44px] w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3A5B22]/40 focus:border-[#3A5B22] transition";
 
   return (
-    <div className="flex w-full min-h-screen">
-      <div className="flex-1 flex justify-center items-center bg-white px-4">
-        <div className="w-full max-w-md">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">Create Staff Account</h1>
-            <p className="text-gray-500 text-sm">Register to manage and resolve grievances</p>
+    <div className="flex min-h-screen w-full">
+      <div className="flex w-full min-w-0 flex-1 items-center justify-center bg-white px-4 py-6 sm:px-6 sm:py-8 lg:w-1/2 lg:px-8">
+        <div className="w-full max-w-lg">
+          <SignupMobileNavigation activeRole="staff" />
+          <div className="mb-6 sm:mb-8">
+            <h1 className="mb-1 text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">Create Staff Account</h1>
+            <p className="text-sm text-gray-500 sm:text-base">Register to manage and resolve grievances</p>
           </div>
 
           {success && (
@@ -76,8 +78,9 @@ export const StaffsignUp = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+                <label htmlFor="staff-full-name" className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
               <input
+                  id="staff-full-name"
                 name="userName"
                 type="text"
                 required
@@ -89,8 +92,9 @@ export const StaffsignUp = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+                <label htmlFor="staff-email" className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
               <input
+                  id="staff-email"
                 name="email"
                 type="email"
                 required
@@ -103,8 +107,9 @@ export const StaffsignUp = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                <label htmlFor="staff-password" className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
                 <input
+                  id="staff-password"
                   name="password"
                   type="password"
                   required
@@ -115,8 +120,9 @@ export const StaffsignUp = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
+                <label htmlFor="staff-confirm-password" className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
                 <input
+                  id="staff-confirm-password"
                   name="confirmPassword"
                   type="password"
                   required
@@ -131,7 +137,7 @@ export const StaffsignUp = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 bg-[#3A5B22] hover:bg-[#2e4a1a] text-white py-2.5 rounded-lg font-semibold transition disabled:opacity-70 disabled:cursor-not-allowed"
+              className="min-h-[44px] w-full flex items-center justify-center gap-2 bg-[#3A5B22] hover:bg-[#2e4a1a] text-white py-2.5 rounded-lg font-semibold transition disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading && <LoadingSpinner size="sm" className="text-white" />}
               {isLoading ? "Creating account..." : "Sign Up"}
@@ -147,8 +153,8 @@ export const StaffsignUp = () => {
         </div>
       </div>
 
-      <div className="flex-1 hidden md:block">
-        <img src={img} alt="Signup" className="w-full h-screen object-cover" />
+      <div className="hidden lg:block lg:w-1/2">
+        <img src={img} alt="Signup" className="h-screen w-full object-cover" />
       </div>
     </div>
   );

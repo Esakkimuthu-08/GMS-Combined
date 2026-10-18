@@ -17,7 +17,9 @@ export const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
-  const signupPath = location.pathname.replace("/login", "/signup");
+  const signupPath = location.pathname === "/admin/login"
+    ? null
+    : location.pathname.replace("/login", "/signup");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,12 +96,14 @@ export const Login = () => {
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
-            Don't have an account?{" "}
-            <Link to={signupPath} className="text-[#3A5B22] font-semibold hover:underline">
-              Sign Up
-            </Link>
-          </p>
+          {signupPath && (
+            <p className="text-center text-sm text-gray-500 mt-6">
+              Don't have an account?{" "}
+              <Link to={signupPath} className="text-[#3A5B22] font-semibold hover:underline">
+                Sign Up
+              </Link>
+            </p>
+          )}
         </div>
       </div>
 

@@ -93,7 +93,7 @@ function Discussion({ grievanceId }) {
 
   if (isLoading) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 bg-slate-50/70 p-8" role="status">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 bg-slate-50/70 p-8" role="status">
         <Loader2 className="h-7 w-7 animate-spin text-[#3A5B22]" />
         <p className="text-sm font-medium text-slate-500">Loading conversation…</p>
       </div>
@@ -102,7 +102,7 @@ function Discussion({ grievanceId }) {
 
   if (isError) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 bg-slate-50/70 p-8 text-center">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 bg-slate-50/70 p-8 text-center">
         <span className="rounded-2xl bg-rose-50 p-3 text-rose-600"><AlertCircle size={22} /></span>
         <div>
           <p className="font-semibold text-slate-800">We couldn’t load this conversation</p>
@@ -125,7 +125,7 @@ function Discussion({ grievanceId }) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-[#f7f8f6]">
-      <div className="flex items-center justify-between border-b border-slate-200/80 bg-white px-5 py-3">
+      <div className="hidden shrink-0 items-center justify-between border-b border-slate-200/80 bg-white px-5 py-3 lg:flex">
         <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
           <MessageSquare size={16} className="text-[#3A5B22]" />
           Conversation
@@ -133,7 +133,7 @@ function Discussion({ grievanceId }) {
             {messages.length}
           </span>
         </div>
-        <span className="text-xs text-slate-400">Replies are visible to the grievance team</span>
+        <span className="hidden text-xs text-slate-400 sm:inline">Replies are visible to the grievance team</span>
       </div>
 
       {isMarkReadError && (
@@ -143,11 +143,11 @@ function Discussion({ grievanceId }) {
         </p>
       )}
 
-      <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-7" aria-live="polite">
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-3 py-3 md:space-y-5 md:px-7 md:py-6" aria-live="polite">
         {messages.length === 0 ? (
-          <div className="flex h-full min-h-56 flex-col items-center justify-center text-center">
-            <span className="mb-4 rounded-2xl border border-slate-200 bg-white p-4 text-[#3A5B22] shadow-sm">
-              <MessageSquare size={25} />
+          <div className="flex h-full min-h-36 flex-col items-center justify-center text-center md:min-h-56">
+            <span className="mb-3 rounded-2xl border border-slate-200 bg-white p-3 text-[#3A5B22] shadow-sm md:mb-4 md:p-4">
+              <MessageSquare size={22} />
             </span>
             <h3 className="font-semibold text-slate-800">Start the conversation</h3>
             <p className="mt-1 max-w-xs text-sm leading-6 text-slate-500">
@@ -165,7 +165,7 @@ function Discussion({ grievanceId }) {
             return (
               <div key={message.id ?? `${message.createdAt}-${index}`}>
                 {showDate && (
-                  <div className="my-6 flex items-center gap-3" aria-label={formatDate(message.createdAt)}>
+                  <div className="my-4 flex items-center gap-3 md:my-6" aria-label={formatDate(message.createdAt)}>
                     <span className="h-px flex-1 bg-slate-200" />
                     <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold text-slate-500">
                       {formatDate(message.createdAt)}
@@ -173,29 +173,29 @@ function Discussion({ grievanceId }) {
                     <span className="h-px flex-1 bg-slate-200" />
                   </div>
                 )}
-                <div className={`flex max-w-[88%] items-end gap-2.5 sm:max-w-[78%] ${isMe ? "ml-auto flex-row-reverse" : "mr-auto"}`}>
+                <div className={`flex max-w-[92%] items-end gap-2 sm:max-w-[78%] md:gap-2.5 ${isMe ? "ml-auto flex-row-reverse" : "mr-auto"}`}>
                   <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-[11px] font-bold ${isMe ? "bg-[#3A5B22] text-white" : "border border-slate-200 bg-white text-slate-600"}`}>
                     {initials(sender)}
                   </span>
                   <div className={`flex min-w-0 flex-col ${isMe ? "items-end" : "items-start"}`}>
-                    <div className={`mb-1 flex items-center gap-2 px-1 ${isMe ? "flex-row-reverse" : ""}`}>
-                      <span className="text-xs font-semibold text-slate-700">{isMe ? "You" : sender}</span>
+                    <div className={`mb-1 flex max-w-full min-w-0 flex-wrap items-center gap-2 px-1 ${isMe ? "flex-row-reverse" : ""}`}>
+                      <span className="max-w-[12rem] break-words text-[11px] font-semibold text-slate-700 sm:text-xs">{isMe ? "You" : sender}</span>
                       {message.senderRole && (
-                        <span className="text-[10px] font-medium uppercase tracking-wide text-slate-400">
+                        <span className="text-[9px] font-medium uppercase tracking-wide text-slate-400 sm:text-[10px]">
                           {message.senderRole}
                         </span>
                       )}
                     </div>
-                    <div className={`rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm ${isMe ? "rounded-br-md bg-[#3A5B22] text-white" : "rounded-bl-md border border-slate-200 bg-white text-slate-700"}`}>
+                    <div className={`rounded-2xl px-3 py-2 text-xs leading-5 shadow-sm sm:px-4 sm:py-3 sm:text-sm sm:leading-6 ${isMe ? "rounded-br-md bg-[#3A5B22] text-white" : "rounded-bl-md border border-slate-200 bg-white text-slate-700"}`}>
                       <p className="whitespace-pre-wrap break-words">{message.message ?? message.content ?? ""}</p>
                     </div>
                     <span className="mt-1 flex items-center gap-1.5 px-1">
-                      <time className="text-[11px] text-slate-400" dateTime={message.createdAt ?? message.CreatedAt}>
+                      <time className="text-[10px] text-slate-400 sm:text-[11px]" dateTime={message.createdAt ?? message.CreatedAt}>
                         {formatTime(message.createdAt ?? message.CreatedAt)}
                       </time>
                       {isMe && (
                         <span
-                          className={`text-[11px] font-semibold tracking-[-0.08em] ${isRead ? "text-sky-500" : "text-slate-400"}`}
+                          className={`text-[10px] font-semibold tracking-[-0.08em] sm:text-[11px] ${isRead ? "text-sky-500" : "text-slate-400"}`}
                           title={isRead ? "Read" : "Sent"}
                           aria-label={isRead ? "Read by recipient" : "Sent, not yet read"}
                         >
@@ -212,7 +212,7 @@ function Discussion({ grievanceId }) {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="border-t border-slate-200 bg-white p-3 sm:px-5 sm:py-4">
+      <div className="shrink-0 border-t border-slate-200 bg-white p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:p-4">
         {isSendError && (
           <p className="mb-2 flex items-center gap-2 text-xs font-medium text-rose-700" role="alert">
             <AlertCircle size={14} />
@@ -234,7 +234,7 @@ function Discussion({ grievanceId }) {
             }}
             placeholder="Write a message…"
             disabled={isSending}
-            className="max-h-32 min-h-10 flex-1 resize-y bg-transparent px-2 py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400 disabled:opacity-60"
+            className="max-h-24 min-h-10 flex-1 resize-y bg-transparent px-2 py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400 disabled:opacity-60 sm:max-h-32"
           />
           <button
             type="submit"
@@ -246,7 +246,6 @@ function Discussion({ grievanceId }) {
             <span className="hidden sm:inline">Send</span>
           </button>
         </form>
-        <p className="mt-2 px-1 text-[11px] text-slate-400">Press Enter to send · Shift + Enter for a new line</p>
       </div>
     </div>
   );

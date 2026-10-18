@@ -1,67 +1,53 @@
 import React from "react";
 import { MdCancelPresentation } from "react-icons/md";
+import { getStatusBadgeClass, getStatusLabel } from "../utils/statusHelpers";
+import { formatDate } from "../utils/tokenUtils";
+
+const DetailRow = ({ label, children }) => (
+    <div className="flex min-w-0 flex-col gap-1 md:flex-row md:gap-0">
+        <div className="font-semibold md:w-1/2">{label}</div>
+        <div className="hidden w-4 text-center md:block">:</div>
+        <div className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">{children}</div>
+    </div>
+);
 
 export const ViewButton = ({ grievance, cancel, showStudentDetails = false }) => {
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="w-[55%] rounded-2xl bg-white shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4 md:p-0">
+            <div className="flex max-h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-xl md:w-[55%]">
 
-                <div className="flex items-center bg-[#3A5B22] text-white  justify-between rounded-t-2xl border-b p-5">
-                    <h1 className="text-xl font-semibold">Grievance Details</h1>
+                <div className="flex shrink-0 items-center justify-between border-b bg-[#3A5B22] p-4 text-white sm:p-5">
+                    <h1 className="text-lg font-semibold sm:text-xl">Grievance Details</h1>
 
                     <button
+                        type="button"
                         onClick={() => cancel(false)}
-                        className="rounded px-3 py-1 hover:bg-gray-100 hover:text-black"
+                        aria-label="Close grievance details"
+                        className="rounded p-2 hover:bg-gray-100 hover:text-black"
                     >
-                        <MdCancelPresentation className=" bg-none" size={30} />
+                        <MdCancelPresentation size={26} />
                     </button>
                 </div>
 
-                <div className="space-y-4 p-8">
+                <div className="min-h-0 space-y-4 overflow-y-auto p-4 md:p-8">
 
-                    <div className="flex">
-                        <div className="w-1/2 font-semibold">Ticket ID</div>
-                        <div className="w-4 text-center">:</div>
-                        <div className="flex-1">{grievance.ticketId}</div>
-                    </div>
+                    <DetailRow label="Ticket ID">{grievance.ticketId}</DetailRow>
 
-                    <div className="flex">
-                        <div className="w-1/2 font-semibold">Subject</div>
-                        <div className="w-4 text-center">:</div>
-                        <div className="flex-1">{grievance.subject}</div>
-                    </div>
+                    <DetailRow label="Subject">{grievance.subject}</DetailRow>
 
-                    <div className="flex">
-                        <div className="w-1/2 font-semibold">Description</div>
-                        <div className="w-4 text-center">:</div>
-                        <div className="flex-1">{grievance.description}</div>
-                    </div>
+                    <DetailRow label="Description">{grievance.description}</DetailRow>
 
-                    <div className="flex">
-                        <div className="w-1/2 font-semibold">Category</div>
-                        <div className="w-4 text-center">:</div>
-                        <div className="flex-1">{grievance.grievanceCategory}</div>
-                    </div>
+                    <DetailRow label="Category">{grievance.grievanceCategory}</DetailRow>
 
-                    <div className="flex">
-                        <div className="w-1/2 font-semibold">Status</div>
-                        <div className="w-4 text-center">:</div>
-                        <div className="flex-1">{grievance.status}</div>
-                    </div>
+                    <DetailRow label="Status">
+                        <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${getStatusBadgeClass(grievance.status)}`}>
+                            {getStatusLabel(grievance.status)}
+                        </span>
+                    </DetailRow>
 
-                    <div className="flex">
-                        <div className="w-1/2 font-semibold">Created On</div>
-                        <div className="w-4 text-center">:</div>
-                        <div className="flex-1">{grievance.createdAt}</div>
-                    </div>
+                    <DetailRow label="Created On">{formatDate(grievance.createdAt)}</DetailRow>
 
-                    <div className="flex">
-                        <div className="w-1/2 font-semibold">Assigned Staff</div>
-                        <div className="w-4 text-center">:</div>
-                        <div className="flex-1">
-                            {grievance.assignedToStaff.name ?? "Not Assigned"}
-                        </div>
-                    </div>
+                    <DetailRow label="Assigned Staff">{grievance.assignedToStaff?.name ?? "Not Assigned"}</DetailRow>
 
                     {showStudentDetails && grievance.student && (
                         <>
@@ -69,29 +55,13 @@ export const ViewButton = ({ grievance, cancel, showStudentDetails = false }) =>
 
                             <h2 className="text-lg font-semibold">Student Details</h2>
 
-                            <div className="flex">
-                                <div className="w-1/2 font-semibold">Name</div>
-                                <div className="w-4 text-center">:</div>
-                                <div className="flex-1">{grievance.student.name}</div>
-                            </div>
+                            <DetailRow label="Name">{grievance.student.name}</DetailRow>
 
-                            <div className="flex">
-                                <div className="w-1/2 font-semibold">Roll No</div>
-                                <div className="w-4 text-center">:</div>
-                                <div className="flex-1">{grievance.student.rollNo}</div>
-                            </div>
+                            <DetailRow label="Roll No">{grievance.student.rollNo}</DetailRow>
 
-                            <div className="flex">
-                                <div className="w-1/2 font-semibold">Email</div>
-                                <div className="w-4 text-center">:</div>
-                                <div className="flex-1">{grievance.student.email}</div>
-                            </div>
+                            <DetailRow label="Email">{grievance.student.email}</DetailRow>
 
-                            <div className="flex">
-                                <div className="w-1/2 font-semibold">Phone</div>
-                                <div className="w-4 text-center">:</div>
-                                <div className="flex-1">{grievance.student.phoneNumber}</div>
-                            </div>
+                            <DetailRow label="Phone">{grievance.student.phoneNumber}</DetailRow>
                         </>
                     )}
                 </div>

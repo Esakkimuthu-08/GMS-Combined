@@ -1,5 +1,5 @@
 import StaffAdminLayout from "../../layouts/StaffAdminLayout";
-import { Eye, MessageSquare, X, Loader2, CircleCheck, AlertCircle, ChevronDown } from "lucide-react";
+import { Eye, MessageSquare, X, Loader2, CircleCheck, AlertCircle, ChevronDown, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { grievanceService } from "../../api/grievanceService";
 import { TableRowSkeleton } from "../../components/common/SkeletonLoader";
@@ -10,8 +10,157 @@ import Discussion from "@/components/Discussion";
 import { Hook, getAuthQueryScope, staffGrievancesQueryKey } from "@/api/hook";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSearchParams } from "react-router-dom";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
+
+const STATUS_OPTIONS = [
+  { value: 0, label: "Pending" },
+  { value: 1, label: "In Progress" },
+  { value: 2, label: "Resolved" },
+  { value: 3, label: "Rejected" },
+];
+
+function StatusSelect({ grievance, disabled, onChange }) {
+  const triggerRef = useRef(null);
+  const menuRef = useRef(null);
+  const listRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(getStatusValue(grievance.status) ?? 0);
+  const [position, setPosition] = useState(null);
+  const value = getStatusValue(grievance.status);
+  const selected = STATUS_OPTIONS.find((option) => option.value === value);
+
+  useLayoutEffect(() => {
+    if (!open || !triggerRef.current || !menuRef.current) return undefined;
+
+    const updatePosition = () => {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      const menu = menuRef.current;
+      if (!rect || !menu) return;
+      const width = Math.min(176, window.innerWidth - 16);
+      const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+      const menuHeight = menu.offsetHeight;
+      const spaceBelow = window.innerHeight - rect.bottom - 8;
+      const placeAbove = spaceBelow < Math.min(menuHeight, 220) && rect.top > spaceBelow;
+      const top = placeAbove
+        ? Math.max(8, rect.top - menuHeight - 6)
+        : Math.min(rect.bottom + 6, window.innerHeight - menuHeight - 8);
+      setPosition({ top, left, width });
+    };
+
+    updatePosition();
+    listRef.current?.focus();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const closeOnOutsidePointer = (event) => {
+      if (triggerRef.current?.contains(event.target) || menuRef.current?.contains(event.target)) return;
+      setOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    return () => document.removeEventListener("pointerdown", closeOnOutsidePointer);
+  }, [open]);
+
+  const chooseOption = (option) => {
+    setOpen(false);
+    triggerRef.current?.focus();
+    if (option.value !== value) onChange(grievance, String(option.value));
+  };
+
+  const handleListKeyDown = (event) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      const direction = event.key === "ArrowDown" ? 1 : -1;
+      setActiveIndex((index) => (index + direction + STATUS_OPTIONS.length) % STATUS_OPTIONS.length);
+    } else if (event.key === "Home" || event.key === "End") {
+      event.preventDefault();
+      setActiveIndex(event.key === "Home" ? 0 : STATUS_OPTIONS.length - 1);
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      chooseOption(STATUS_OPTIONS[activeIndex]);
+    } else if (event.key === "Escape" || event.key === "Tab") {
+      setOpen(false);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        triggerRef.current?.focus();
+      }
+    }
+  };
+
+  return (
+    <>
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-label={`Update status for ${grievance.ticketId}`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        disabled={disabled}
+        onClick={() => {
+          setActiveIndex(value ?? 0);
+          setOpen((isOpen) => !isOpen);
+        }}
+        onKeyDown={(event) => {
+          if (["ArrowDown", "ArrowUp", "Enter", " "].includes(event.key)) {
+            event.preventDefault();
+            setActiveIndex(value ?? 0);
+            setOpen(true);
+          }
+        }}
+        className={`inline-flex w-[136px] max-w-full items-center justify-between gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-[#3A5B22]/30 disabled:cursor-wait disabled:opacity-60 ${getStatusBadgeClass(grievance.status)}`}
+      >
+        <span className="truncate">{selected?.label ?? "Unknown status"}</span>
+        <ChevronDown size={14} className={`shrink-0 opacity-70 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      {open && createPortal(
+        <div
+          ref={menuRef}
+          className="fixed z-[120] overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl shadow-slate-900/10"
+          style={{ top: position?.top ?? -10000, left: position?.left ?? 8, width: position?.width ?? 176, visibility: position ? "visible" : "hidden" }}
+        >
+          <div
+            ref={listRef}
+            role="listbox"
+            tabIndex={0}
+            aria-label={`Status options for ${grievance.ticketId}`}
+            aria-activedescendant={`status-option-${grievance.id}-${STATUS_OPTIONS[activeIndex].value}`}
+            onKeyDown={handleListKeyDown}
+            className="max-h-[min(16rem,60vh)] overflow-y-auto outline-none"
+          >
+            {STATUS_OPTIONS.map((option, index) => {
+              const isSelected = option.value === value;
+              const isActive = index === activeIndex;
+              return (
+                <div
+                  key={option.value}
+                  id={`status-option-${grievance.id}-${option.value}`}
+                  role="option"
+                  aria-selected={isSelected}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => chooseOption(option)}
+                  className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${getStatusBadgeClass(option.value)} ${isActive ? "ring-1 ring-inset ring-slate-200" : ""} hover:brightness-[0.98]`}
+                >
+                  <span>{option.label}</span>
+                  {isSelected && <Check size={15} aria-hidden="true" />}
+                </div>
+              );
+            })}
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
+  );
+}
 
 
 export default function StaffGrievances() {
@@ -140,22 +289,11 @@ export default function StaffGrievances() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="inline-flex items-center gap-2">
-                          <span className="relative inline-flex">
-                            <select
-                              aria-label={`Update status for ${g.ticketId}`}
-                              value={getStatusValue(g.status) ?? ""}
-                              disabled={updateStatus.isPending}
-                              onChange={(event) => handleStatusChange(g, event.target.value)}
-                              className={`max-w-full cursor-pointer appearance-none rounded-full border py-1 pl-2.5 pr-7 text-xs font-semibold outline-none transition focus:ring-2 focus:ring-[#3A5B22]/30 disabled:cursor-wait disabled:opacity-60 ${getStatusBadgeClass(g.status)}`}
-                            >
-                              {getStatusValue(g.status) === null && <option value="" disabled>Unknown status</option>}
-                              <option value={0}>Pending</option>
-                              <option value={1}>In Progress</option>
-                              <option value={2}>Resolved</option>
-                              <option value={3}>Rejected</option>
-                            </select>
-                            <ChevronDown size={13} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 opacity-60" aria-hidden="true" />
-                          </span>
+                          <StatusSelect
+                            grievance={g}
+                            disabled={updateStatus.isPending}
+                            onChange={handleStatusChange}
+                          />
                           {pendingStatusId === Number(g.id) && <Loader2 size={14} className="animate-spin text-slate-400" aria-label="Saving status" />}
                         </div>
                       </td>
