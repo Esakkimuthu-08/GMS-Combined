@@ -11,6 +11,7 @@ namespace Grievance_Management_System_Project.Controllers
     public class AuthController(IAuthService authService) : ControllerBase
     {
         [HttpPost("staffSignUp")]
+        [Authorize]
         public async Task<IActionResult> StaffSignup([FromBody] StaffSignUpRequest staffSignUpRequest)
         {
             await authService.StaffSignUp(staffSignUpRequest);
