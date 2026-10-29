@@ -29,7 +29,7 @@ namespace Grievence_Management_System_Project.Repository
 
         public async Task<RaiseGrievances> GetById(int Id)
         {
-            return await grievenceDbContext.RaiseGrievances.FirstOrDefaultAsync(ticket => ticket.Id == Id);
+            return await grievenceDbContext.RaiseGrievances.AsNoTracking().FirstOrDefaultAsync(ticket => ticket.Id == Id);
         }
 
         public async Task UpdateStatus(RaiseGrievances grievance)

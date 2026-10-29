@@ -18,10 +18,18 @@ namespace Grievence_Management_System_Project.Service
     {
         public async Task AddMessage(GrievanceMessageDto grievanceMessageDto, string email)
         {
+
             RaiseGrievances grievanceId = await grievanceRepository.GetById(grievanceMessageDto.GrievanceId)
                      ?? throw new NotFoundException();
 
             Student student = await studentRepository.GetByEmail(email);
+
+
+            if (grievanceId.Status == Enum.GrievanceStatus.Resolved ||
+                grievanceId.Status == Enum.GrievanceStatus.Rejected)
+            {
+                throw new ForbiddenException();
+            }
 
             string sender;
             string recipientEmail;
